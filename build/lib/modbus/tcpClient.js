@@ -26,11 +26,12 @@ var import_protocol = require("./protocol");
 const DEFAULT_TIMEOUT_MS = 5e3;
 const MAX_REGISTERS = 125;
 class ModbusTcpClient {
-  constructor(host, port, unitId, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  constructor(host, port, unitId, timeoutMs = DEFAULT_TIMEOUT_MS, timers) {
     this.host = host;
     this.port = port;
     this.unitId = unitId;
     this.timeoutMs = timeoutMs;
+    this.timers = timers;
   }
   socket = null;
   buffer = Buffer.alloc(0);
@@ -152,20 +153,26 @@ class ModbusTcpClient {
   waitForFrame() {
     return new Promise((resolve, reject) => {
       let settled = false;
-      const timer = setTimeout(() => {
+      const onTimeout = () => {
         this.waiter = null;
         if (settled) {
           return;
         }
         settled = true;
         reject(new Error("Modbus TCP read timeout"));
-      }, this.timeoutMs);
+      };
+      if (!this.timers) {
+        reject(new Error("ModbusTcpClient requires adapter timers for read timeouts"));
+        return;
+      }
+      const timer = this.timers.setTimeout(onTimeout, this.timeoutMs);
       this.waiter = (frame, err) => {
+        var _a;
         if (settled) {
           return;
         }
         settled = true;
-        clearTimeout(timer);
+        (_a = this.timers) == null ? void 0 : _a.clearTimeout(timer);
         if (err || !frame) {
           reject(err != null ? err : new Error("Modbus empty response"));
         } else {

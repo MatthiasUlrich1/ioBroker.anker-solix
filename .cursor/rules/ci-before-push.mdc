@@ -16,10 +16,10 @@ This mirrors GitHub Actions `check-and-lint`: typecheck, eslint/prettier, build,
 When bumping adapter version:
 
 1. Match `package.json` and `io-package.json` `version`.
-2. Add **one** `common.news` entry for the new version.
-3. Keep **at most 7** news keys — only npm-published versions plus the current unreleased version.
-4. Move removed GitHub-only news text to `CHANGELOG_OLD.md` and add `### x.y.z` to README changelog.
+2. `common.news` may list **npm-published versions only** (repochecker E2004). Do **not** add GitHub-only interim versions to news; document them in the README changelog instead. When preparing an npm tag release, add **one** news entry for that version.
+3. Keep **at most 7** news keys.
+4. Move removed news text to `CHANGELOG_OLD.md` and add `### x.y.z` to README changelog.
 
 After editing TypeScript under `src/`, run `npm run build` and commit updated `build/` if the repo tracks compiled output.
 
-Do not push if `verify:ci` fails. A pre-push hook (`githooks/pre-push`, enabled via `npm install` → `prepare`) blocks broken pushes locally.
+Do not push if `verify:ci` fails. Enable the local pre-push hook once after clone: `npm run setup:githooks` (do not use a `prepare` script — E0094).

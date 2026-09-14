@@ -15,6 +15,8 @@ import type { ModbusRegisterType } from "./types";
 const DEFAULT_TIMEOUT_MS = 5000;
 const MAX_REGISTERS = 125;
 
+type TimerHost = Pick<ioBroker.Adapter, "setTimeout" | "clearTimeout">;
+
 export class ModbusTcpClient {
 	private socket: Socket | null = null;
 	private buffer = Buffer.alloc(0);
@@ -28,6 +30,7 @@ export class ModbusTcpClient {
 		private readonly port: number,
 		private readonly unitId: number,
 		private readonly timeoutMs = DEFAULT_TIMEOUT_MS,
+		private readonly timers?: TimerHost,
 	) {}
 
 	async connect(): Promise<void> {
@@ -148,20 +151,25 @@ export class ModbusTcpClient {
 	private waitForFrame(): Promise<Buffer> {
 		return new Promise((resolve, reject) => {
 			let settled = false;
-			const timer = setTimeout(() => {
+			const onTimeout = (): void => {
 				this.waiter = null;
 				if (settled) {
 					return;
 				}
 				settled = true;
 				reject(new Error("Modbus TCP read timeout"));
-			}, this.timeoutMs);
+			};
+			if (!this.timers) {
+				reject(new Error("ModbusTcpClient requires adapter timers for read timeouts"));
+				return;
+			}
+			const timer = this.timers.setTimeout(onTimeout, this.timeoutMs);
 			this.waiter = (frame, err) => {
 				if (settled) {
 					return;
 				}
 				settled = true;
-				clearTimeout(timer);
+				this.timers?.clearTimeout(timer);
 				if (err || !frame) {
 					reject(err ?? new Error("Modbus empty response"));
 				} else {

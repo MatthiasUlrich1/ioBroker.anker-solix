@@ -10,9 +10,9 @@ if (!existsSync(path.join(root, ".git"))) {
 	process.exit(0);
 }
 try {
-	execSync("git config core.autocrlf false", { cwd: root, stdio: "ignore" });
-	execSync("git config core.eol lf", { cwd: root, stdio: "ignore" });
 	execSync("git config core.hooksPath githooks", { cwd: root, stdio: "ignore" });
+	console.log("Git hooks path set to githooks/ (pre-push runs npm run verify:ci)");
 } catch {
 	// Non-fatal (e.g. bare clone, sandbox).
+	process.exit(0);
 }

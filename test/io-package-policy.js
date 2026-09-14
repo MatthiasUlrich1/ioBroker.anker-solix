@@ -42,12 +42,23 @@ describe("io-package policy", () => {
 			this.skip(`npm registry unreachable: ${err.message}`);
 		}
 		for (const key of newsKeys) {
-			if (key === version && !published.includes(key)) {
-				// Current adapter version may not be on npm until after release (CI deploy).
-				continue;
-			}
-			assert.ok(published.includes(key), `common.news["${key}"] is not published on npm (E2004)`);
+			assert.ok(
+				published.includes(key),
+				`common.news["${key}"] is not published on npm (E2004). ` +
+					"GitHub-only interim versions belong in README changelog, not common.news.",
+			);
 		}
+	});
+
+	it("does not define a prepare script (E0094)", () => {
+		assert.ok(!pkg.scripts?.prepare, 'package.json must not define scripts.prepare (E0094); use "setup:githooks" instead');
+	});
+
+	it("adapter-tests matrix includes Node.js 26", () => {
+		assert.ok(
+			/node-version:\s*\[[^\]]*26\.x[^\]]*\]/.test(workflow),
+			"test-and-release.yml adapter-tests matrix must include 26.x (issue #10)",
+		);
 	});
 
 	it("README.md mentions the current adapter version (E6006)", () => {

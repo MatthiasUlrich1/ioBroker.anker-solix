@@ -56,7 +56,7 @@ export class ModbusChannel {
 		const intervalSec = parseModbusScanInterval(this.adapter.config.modbusScanInterval);
 		for (const config of configs) {
 			const id = modbusDeviceId(config);
-			const client = new ModbusTcpClient(config.host, config.port, config.unitId);
+			const client = new ModbusTcpClient(config.host, config.port, config.unitId, undefined, this.adapter);
 			const profile = config.profile === "auto" ? undefined : getModbusProfile(config.profile);
 			this.devices.push({
 				id,
