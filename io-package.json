@@ -4,6 +4,19 @@
 		"version": "0.10.105",
 		"messagebox": true,
 		"news": {
+			"0.10.105": {
+				"en": "VIS/VIS-2 widgets auto-sync; HTML dashboards; SB4 daily kWh fix; Node.js 22/24/26 CI; repo-checker compliance",
+				"de": "VIS/VIS-2-Widgets Auto-Sync; HTML-Dashboards; SB4-Tages-kWh-Fix; CI für Node.js 22/24/26; Repo-Checker-Anforderungen erfüllt",
+				"ru": "Автосинхронизация виджетов VIS/VIS-2; HTML-дашборды; исправление дневных кВт·ч SB4; CI Node.js 22/24/26",
+				"pt": "Sincronização automática de widgets VIS/VIS-2; dashboards HTML; correção kWh diário SB4; CI Node.js 22/24/26",
+				"nl": "Automatische VIS/VIS-2-widget-sync; HTML-dashboards; SB4 dagelijkse kWh-fix; CI voor Node.js 22/24/26",
+				"fr": "Auto-sync des widgets VIS/VIS-2 ; tableaux de bord HTML ; correctif kWh quotidiens SB4 ; CI Node.js 22/24/26",
+				"it": "Auto-sync widget VIS/VIS-2; dashboard HTML; fix kWh giornalieri SB4; CI Node.js 22/24/26",
+				"es": "Auto-sincronización de widgets VIS/VIS-2; paneles HTML; corrección kWh diarios SB4; CI Node.js 22/24/26",
+				"pl": "Autosynchronizacja widgetów VIS/VIS-2; pulpity HTML; poprawka dziennego kWh SB4; CI Node.js 22/24/26",
+				"uk": "Автосинхронізація віджетів VIS/VIS-2; HTML-дашборди; виправлення денних кВт·год SB4; CI Node.js 22/24/26",
+				"zh-cn": "VIS/VIS-2 Widget 自动同步；HTML 仪表盘；SB4 日电量修复；Node.js 22/24/26 CI"
+			},
 			"0.10.90": {
 				"en": "Modbus only: skip Anker cloud/Python; instance is green when a local Modbus device is connected",
 				"de": "Nur Modbus: keine Anker-Cloud/Python; Instanz ist grün, sobald ein lokales Modbus-Gerät verbunden ist",

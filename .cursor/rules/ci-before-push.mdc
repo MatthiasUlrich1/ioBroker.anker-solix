@@ -13,12 +13,14 @@ npm run verify:ci
 
 This mirrors GitHub Actions `check-and-lint`: typecheck, eslint/prettier, build, and `test:package` (io-package news policy E2004, max 7 entries, npm-published versions only).
 
-When bumping adapter version:
+When bumping adapter version for an **npm release** (tag `v*`):
 
 1. Match `package.json` and `io-package.json` `version`.
-2. `common.news` may list **npm-published versions only** (repochecker E2004). Do **not** add GitHub-only interim versions to news; document them in the README changelog instead. When preparing an npm tag release, add **one** news entry for that version.
-3. Keep **at most 7** news keys.
-4. Move removed news text to `CHANGELOG_OLD.md` and add `### x.y.z` to README changelog.
+2. Add **one** `common.news` entry for that version (required — E1036). Keep **at most 7** news keys.
+3. News keys must be npm-published versions **or** the current version about to be tagged (E2004 clears after publish).
+4. Document all versions in the README changelog; move older news text to `CHANGELOG_OLD.md` as needed.
+
+Pure GitHub interim bumps without npm: do **not** add unpublished versions to `common.news` (document in README only).
 
 After editing TypeScript under `src/`, run `npm run build` and commit updated `build/` if the repo tracks compiled output.
 

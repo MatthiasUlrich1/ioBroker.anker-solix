@@ -28,7 +28,7 @@ describe("io-package policy", () => {
 		);
 	});
 
-	it("lists only npm-published versions in common.news", function () {
+	it("lists only npm-published versions in common.news (or the version about to be published)", function () {
 		this.timeout(120_000);
 		let published;
 		try {
@@ -42,12 +42,20 @@ describe("io-package policy", () => {
 			this.skip(`npm registry unreachable: ${err.message}`);
 		}
 		for (const key of newsKeys) {
+			if (key === version && !published.includes(key)) {
+				// Allowed only for the current version during the npm publish window (E1036 vs E2004).
+				continue;
+			}
 			assert.ok(
 				published.includes(key),
 				`common.news["${key}"] is not published on npm (E2004). ` +
 					"GitHub-only interim versions belong in README changelog, not common.news.",
 			);
 		}
+		assert.ok(
+			newsKeys.includes(version),
+			`common.news must include the current version ${version} (E1036)`,
+		);
 	});
 
 	it("does not define a prepare script (E0094)", () => {
