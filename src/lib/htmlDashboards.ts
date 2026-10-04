@@ -216,8 +216,8 @@ ${tile("⚡", ["AUSGANGS-", "LEISTUNG"], s.appOutputPower !== null ? watts(s.app
 ${tile("🏠", ["HAUSLAST-", "ZIELWERT"], s.homeLoadPreset !== null ? watts(s.homeLoadPreset) : "–", "set_output_power", "orange")}
 </div></div>
 <div class="ss-group green"><div class="ss-group-title">🔋 AKKU</div><div class="ss-grid two">
-${tile("🔋", ["LADEGRENZE", "OBEN"], percent(s.chargeUpperLimit), "max_charge_soc", "green")}
-${tile("🔋", ["ENTLADEGRENZE", "UNTEN"], percent(s.dischargeLowerLimit), "min_soc", "green")}
+${tile("🔋", ["LADEGRENZE", "OBEN"], percent(s.chargeUpperLimit), "charge_upper_limit", "green")}
+${tile("🔋", ["ENTLADEGRENZE", "UNTEN"], percent(s.dischargeLowerLimit), "discharge_lower_limit", "green")}
 </div></div>
 <div class="ss-group blue"><div class="ss-group-title">🌐 NETZ</div><div class="ss-grid three">
 ${tile("↻", ["NETZEIN-", "SPEISUNG"], exportText, "allow_grid_export", "blue")}

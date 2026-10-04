@@ -95,7 +95,7 @@ function calcSelfConsumption(solar, gridExport) {
   return Math.round(clampPercent((solar - gridExport) / solar * 100) * 10) / 10;
 }
 function buildSiteSnapshot(siteId, devices) {
-  var _a, _b, _c;
+  var _a, _b, _c, _d, _e;
   const { solar: solarDev, home: homeDev, soc: socDev } = powerSource(devices);
   const bank = pickPrimarySolarbank(devices);
   const meter = pickSmartmeter(devices);
@@ -150,11 +150,11 @@ function buildSiteSnapshot(siteId, devices) {
     settings: {
       appOutputPower: settingsDev ? (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "ac_output_limit") : null,
       homeLoadPreset: settingsDev ? (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "set_output_power") : null,
-      chargeUpperLimit: settingsDev ? (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "max_soc") : null,
-      dischargeLowerLimit: settingsDev ? (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "min_soc") : null,
+      chargeUpperLimit: settingsDev ? (_c = (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "charge_upper_limit")) != null ? _c : (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "max_soc") : null,
+      dischargeLowerLimit: settingsDev ? (_d = (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "discharge_lower_limit")) != null ? _d : (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "min_soc") : null,
       allowGridExport: settingsDev ? (0, import_htmlDashboards.optionalBool)(settingsDev.entities, "allow_grid_export") : null,
       acInputLimit: settingsDev ? (0, import_htmlDashboards.optionalNum)(settingsDev.entities, "ac_input_power") : null,
-      operatingMode: ((_c = settingsDev == null ? void 0 : settingsDev.entities.preset_usage_mode) == null ? void 0 : _c.toString()) || "\u2013"
+      operatingMode: ((_e = settingsDev == null ? void 0 : settingsDev.entities.preset_usage_mode) == null ? void 0 : _e.toString()) || "\u2013"
     },
     energy: {
       solar: energySolar,
