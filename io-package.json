@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.105",
+		"version": "0.10.106",
 		"messagebox": true,
 		"news": {
+			"0.10.106": {
+				"en": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot automerge without pull_request_target",
+				"de": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot-Automerge ohne pull_request_target",
+				"ru": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot automerge без pull_request_target",
+				"pt": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot sem pull_request_target",
+				"nl": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot-automerge zonder pull_request_target",
+				"fr": "Solarbank 3 (A17C5) : charge_upper_limit / discharge_lower_limit ; @iobroker/testing 6.x ; automerge Dependabot sans pull_request_target",
+				"it": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot senza pull_request_target",
+				"es": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge de Dependabot sin pull_request_target",
+				"pl": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot bez pull_request_target",
+				"uk": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot без pull_request_target",
+				"zh-cn": "Solarbank 3 (A17C5)：charge_upper_limit / discharge_lower_limit；@iobroker/testing 6.x；Dependabot 自动合并改用 pull_request"
+			},
 			"0.10.105": {
 				"en": "VIS/VIS-2 widgets auto-sync; HTML dashboards; SB4 daily kWh fix; Node.js 22/24/26 CI; repo-checker compliance",
 				"de": "VIS/VIS-2-Widgets Auto-Sync; HTML-Dashboards; SB4-Tages-kWh-Fix; CI für Node.js 22/24/26; Repo-Checker-Anforderungen erfüllt",

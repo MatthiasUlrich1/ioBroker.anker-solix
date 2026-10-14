@@ -1,11 +1,15 @@
 # Workflow for auto-merging Dependabot PRs
 # This workflow uses the action-automerge-dependabot action to automatically merge
 # Dependabot PRs based on the rules defined in .github/auto-merge.yml
+#
+# Uses pull_request (not pull_request_target) so it remains allowed after GitHub's
+# Nov 2026 pull_request_target policy change. Dependabot PRs still get write access.
+# See: https://github.com/MatthiasUlrich1/ioBroker.anker-solix/issues/18
 
 name: Auto-Merge Dependabot PRs
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
