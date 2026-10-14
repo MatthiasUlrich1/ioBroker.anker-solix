@@ -150,6 +150,8 @@ const ENTITY_ID_GROUPS = {
   ac_output_limit: [ENTITY_GROUP_CORE],
   max_total_ac_output: [ENTITY_GROUP_CORE],
   min_soc: [ENTITY_GROUP_CORE],
+  charge_upper_limit: [ENTITY_GROUP_CORE],
+  discharge_lower_limit: [ENTITY_GROUP_CORE],
   grid_export_limit: [ENTITY_GROUP_CORE],
   preset_usage_mode: [ENTITY_GROUP_CORE],
   ac_fast_charge_switch: [ENTITY_GROUP_CORE],

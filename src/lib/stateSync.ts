@@ -382,7 +382,9 @@ export async function syncDevices(adapter: ioBroker.Adapter, devices: BridgeDevi
 			} else if (STATISTICS_LABELS[entityId]) {
 				await adapter.extendObject(stateId, { common: { name: common.name } });
 			}
-			if (hasValue || writable) {
+			const preserveMissingSocLimit = entityId === "charge_upper_limit" || entityId === "discharge_lower_limit";
+
+			if (hasValue || (writable && !preserveMissingSocLimit)) {
 				await adapter.setState(stateId, stateVal, true);
 				if (typeof stateVal === "number") {
 					device.entities[entityId] = stateVal;

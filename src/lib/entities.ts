@@ -210,6 +210,8 @@ const CONTROL_ENTITIES: EntityMeta[] = [
 		unit: "W",
 	},
 	{ id: "min_soc", kind: "number", role: "level.battery", unit: "%", min: 0, max: 100 },
+	{ id: "charge_upper_limit", kind: "number", role: "level.battery", unit: "%", min: 0, max: 100 },
+	{ id: "discharge_lower_limit", kind: "number", role: "level.battery", unit: "%", min: 0, max: 100 },
 	{
 		id: "pv_input_limit",
 		kind: "number",
@@ -480,6 +482,8 @@ export const STATISTICS_LABELS: Record<string, string> = {
 	allow_grid_export: "Allow grid export",
 	preset_allow_export: "Allow export (schedule preset)",
 	min_soc: "Minimum SOC reserve (%)",
+	charge_upper_limit: "Charge upper limit (%)",
+	discharge_lower_limit: "Discharge lower limit (%)",
 	preset_usage_mode: "Usage mode",
 	ev_charger_mode: "Charge mode (EV charger)",
 	ev_charger_mode_status: "Charge mode status (EV charger)",

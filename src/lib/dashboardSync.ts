@@ -179,8 +179,14 @@ function buildSiteSnapshot(siteId: string, devices: BridgeDevice[]): DashboardSi
 		settings: {
 			appOutputPower: settingsDev ? optionalNum(settingsDev.entities, "ac_output_limit") : null,
 			homeLoadPreset: settingsDev ? optionalNum(settingsDev.entities, "set_output_power") : null,
-			chargeUpperLimit: settingsDev ? optionalNum(settingsDev.entities, "max_soc") : null,
-			dischargeLowerLimit: settingsDev ? optionalNum(settingsDev.entities, "min_soc") : null,
+			chargeUpperLimit: settingsDev
+				? (optionalNum(settingsDev.entities, "charge_upper_limit") ??
+					optionalNum(settingsDev.entities, "max_soc"))
+				: null,
+			dischargeLowerLimit: settingsDev
+				? (optionalNum(settingsDev.entities, "discharge_lower_limit") ??
+					optionalNum(settingsDev.entities, "min_soc"))
+				: null,
 			allowGridExport: settingsDev ? optionalBool(settingsDev.entities, "allow_grid_export") : null,
 			acInputLimit: settingsDev ? optionalNum(settingsDev.entities, "ac_input_power") : null,
 			operatingMode: settingsDev?.entities.preset_usage_mode?.toString() || "–",

@@ -241,6 +241,24 @@ _BASE_CONTROL_ENTITIES: list[dict[str, Any]] = [
         "max": 100,
     },
     {
+        "id": "charge_upper_limit",
+        "keys": ["charge_upper_limit"],
+        "role": "level.battery",
+        "types": [SOLARBANK],
+        "control": "charge_upper_limit",
+        "min": 0,
+        "max": 100,
+    },
+    {
+        "id": "discharge_lower_limit",
+        "keys": ["discharge_lower_limit"],
+        "role": "level.battery",
+        "types": [SOLARBANK],
+        "control": "discharge_lower_limit",
+        "min": 0,
+        "max": 100,
+    },
+    {
         "id": "pv_input_limit",
         "keys": ["pv_power_limit", "pv_limit"],
         "role": "level.power",
@@ -617,6 +635,17 @@ def writable_controls_for_device(
         "ac_fast_charge_switch_pps",
     }
     controls = [c for c in controls if c not in _read_only_controls]
+
+    # Gen3 / station-managed systems use the dedicated upper/lower SOC
+    # controls instead of the legacy min_soc control.
+    if (
+        dev_type == SOLARBANK
+        and (
+            int(data.get("generation") or 0) >= 3
+            or str(data.get("device_pn") or "").upper() in {"A17C5", "AE100"}
+        )
+    ):
+        controls = [c for c in controls if c != "min_soc"]
     # SB1 schedule controls (charge/discharge priority via set_home_load)
     is_sb1 = dev_type == SOLARBANK and int(data.get("generation") or 0) < 2
     if not is_sb1:
@@ -740,6 +769,19 @@ def extract_entities(data: dict, config: dict | None = None) -> dict[str, Any]:
         if not entity_spec_enabled(spec, enabled):
             continue
         if dev_type and dev_type not in spec.get("types", []):
+            continue
+
+        # Gen3 / station-managed SOC uses charge_upper_limit and
+        # discharge_lower_limit. The legacy min_soc/power_cutoff control
+        # does not represent the current App setting on these devices.
+        if (
+            spec["id"] == "min_soc"
+            and dev_type == SOLARBANK
+            and (
+                int(data.get("generation") or 0) >= 3
+                or str(data.get("device_pn") or "").upper() in {"A17C5", "AE100"}
+            )
+        ):
             continue
         req_types = spec.get("require_types") or []
         req_keys = spec.get("require_any_keys") or []

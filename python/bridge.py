@@ -826,6 +826,85 @@ async def _set_preset_usage_mode(
     )
 
 
+async def _set_station_soc_limit(
+    api: AnkerSolixApi,
+    site_id: str,
+    device_sn: str,
+    control: str,
+    value: int,
+) -> bool | dict:
+    """Set station-wide upper/lower SOC limit via parameter type 18."""
+
+    if control not in ("charge_upper_limit", "discharge_lower_limit"):
+        raise ValueError(f"Unsupported SOC limit control: {control}")
+
+    if value < 0 or value > 100:
+        raise ValueError(f"{control} must be between 0 and 100")
+
+    current = await api.get_device_parm(
+        siteId=site_id,
+        paramType=SolixParmType.SOLARBANK_STATION.value,
+        deviceSn=device_sn or None,
+    )
+
+    param_data = (current or {}).get("param_data") or {}
+
+    if not isinstance(param_data, dict) or not param_data:
+        raise RuntimeError("Could not load station parameter block (param_type 18)")
+
+    try:
+        current_upper = int(param_data.get("charge_upper_limit"))
+    except (TypeError, ValueError):
+        current_upper = None
+
+    try:
+        current_lower = int(param_data.get("discharge_lower_limit"))
+    except (TypeError, ValueError):
+        current_lower = None
+
+    if control == "charge_upper_limit":
+        if current_lower is not None and value <= current_lower:
+            raise ValueError(
+                f"charge_upper_limit ({value}) must be greater than "
+                f"discharge_lower_limit ({current_lower})"
+            )
+    else:
+        if current_upper is not None and value >= current_upper:
+            raise ValueError(
+                f"discharge_lower_limit ({value}) must be lower than "
+                f"charge_upper_limit ({current_upper})"
+            )
+
+    new_param_data = dict(param_data)
+    new_param_data[control] = value
+
+    result = await api.set_device_parm(
+        siteId=site_id,
+        paramData=new_param_data,
+        paramType=SolixParmType.SOLARBANK_STATION.value,
+        deviceSn=device_sn or None,
+    )
+
+    if result is False:
+        raise RuntimeError(f"{control} was rejected by station parameter API")
+
+    refreshed = await api.get_device_parm(
+        siteId=site_id,
+        paramType=SolixParmType.SOLARBANK_STATION.value,
+        deviceSn=device_sn or None,
+    )
+
+    refreshed_data = (refreshed or {}).get("param_data") or {}
+    actual = refreshed_data.get(control)
+
+    if actual is not None and str(actual) != str(value):
+        raise RuntimeError(
+            f"{control} requested {value}, but cloud reports {actual}"
+        )
+
+    return refreshed if isinstance(refreshed, dict) else {"ok": True}
+
+
 async def _set_min_soc(
     api: AnkerSolixApi,
     site_id: str,
@@ -1032,6 +1111,14 @@ async def apply_control(
             result = {"mqtt": True}
         else:
             raise RuntimeError("ac_fast_charge_switch rejected (MQTT control failed)")
+    elif control in ("charge_upper_limit", "discharge_lower_limit"):
+        result = await _set_station_soc_limit(
+            api,
+            site_id,
+            control_sn or device_id,
+            control,
+            int(value),
+        )
     elif control == "min_soc":
         result = await _set_min_soc(
             api, site_id, control_sn, device_id, device, int(value)
@@ -1260,6 +1347,27 @@ def _devices_from_caches(
             from battery_power_pick import enrich_solarbank_scene  # noqa: PLC0415
 
             ctx_data = enrich_solarbank_scene(client.api, str(ctx_id), ctx_data)
+
+            # Station SOC limits are returned by detail polls. Reuse the
+            # device/site cache when they are absent from the current poll.
+            site_id_soc = str(info.get("site_id") or "")
+            api_dev = client.api.devices.get(str(ctx_id)) or {}
+            api_site = client.api.sites.get(site_id_soc) or {}
+            station_settings = (
+                (api_site.get("site_details") or {}).get("station_settings") or {}
+            )
+
+            for soc_key in (
+                "charge_upper_limit",
+                "discharge_lower_limit",
+            ):
+                if ctx_data.get(soc_key) in (None, ""):
+                    soc_value = api_dev.get(soc_key)
+                    if soc_value in (None, ""):
+                        soc_value = station_settings.get(soc_key)
+                    if soc_value not in (None, ""):
+                        ctx_data = {**ctx_data, soc_key: soc_value}
+
         entities = extract_entities(ctx_data, config)
         writable = writable_controls_for_device(ctx_data, info["type"], config)
         solarbank_info = None
