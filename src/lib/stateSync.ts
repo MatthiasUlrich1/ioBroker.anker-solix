@@ -277,8 +277,16 @@ export async function syncDevices(adapter: ioBroker.Adapter, devices: BridgeDevi
 							? (meta.min ?? 0)
 							: "";
 
+			let displayName = STATISTICS_LABELS[entityId] || entityId;
+			const pvPowerMatch = /^pv_([1-4])_power$/.exec(entityId);
+			if (pvPowerMatch) {
+				const customName = device.entities[`pv_${pvPowerMatch[1]}_name`];
+				if (typeof customName === "string" && customName.trim()) {
+					displayName = customName.trim();
+				}
+			}
 			const common: ioBroker.StateCommon = {
-				name: STATISTICS_LABELS[entityId] || entityId,
+				name: displayName,
 				type: stateType,
 				role: resolveEntityRole(meta, writable),
 				read: true,

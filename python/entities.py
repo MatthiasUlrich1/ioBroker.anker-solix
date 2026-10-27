@@ -483,6 +483,33 @@ def enrich_combiner_station_fields(
     return out
 
 
+def pick_pv_name_value(data: dict, keys: list[str]) -> Any:
+    """Read PV string names from nested cloud ``pv_name`` or flat/MQTT keys."""
+    names = data.get("pv_name")
+    if isinstance(names, dict):
+        for key in keys:
+            val = names.get(key)
+            if val is not None and str(val).strip() != "":
+                return str(val)
+    mqtt = data.get("mqtt_data")
+    if isinstance(mqtt, dict):
+        nested = mqtt.get("pv_name")
+        if isinstance(nested, dict):
+            for key in keys:
+                val = nested.get(key)
+                if val is not None and str(val).strip() != "":
+                    return str(val)
+        for key in keys:
+            val = mqtt.get(key)
+            if val is not None and str(val).strip() != "":
+                return str(val)
+    for key in keys:
+        val = data.get(key)
+        if val is not None and str(val).strip() != "":
+            return str(val)
+    return None
+
+
 def pick_value(data: dict, keys: list[str], nested: bool = False) -> Any:
     mqtt = data.get("mqtt_data")
     if isinstance(mqtt, dict):
@@ -750,6 +777,11 @@ def extract_entities(data: dict, config: dict | None = None) -> dict[str, Any]:
             from ev_charger_mode import current_ev_charger_mode  # noqa: PLC0415
 
             val = current_ev_charger_mode(data)
+            if val is not None:
+                entities[spec["id"]] = val
+            continue
+        if spec.get("from_pv_name"):
+            val = pick_pv_name_value(data, spec["keys"])
             if val is not None:
                 entities[spec["id"]] = val
             continue

@@ -241,8 +241,16 @@ async function syncDevices(adapter, devices) {
       const stateType = resolveStateType(meta, value);
       const hasValue = value !== null && value !== void 0;
       const stateVal = hasValue ? coerceStateValue(stateType, value) : (meta == null ? void 0 : meta.kind) === "switch" ? false : (meta == null ? void 0 : meta.kind) === "statistics" ? null : (meta == null ? void 0 : meta.kind) === "number" ? (_b = meta.min) != null ? _b : 0 : "";
+      let displayName = import_entities.STATISTICS_LABELS[entityId] || entityId;
+      const pvPowerMatch = /^pv_([1-4])_power$/.exec(entityId);
+      if (pvPowerMatch) {
+        const customName = device.entities[`pv_${pvPowerMatch[1]}_name`];
+        if (typeof customName === "string" && customName.trim()) {
+          displayName = customName.trim();
+        }
+      }
       const common = {
-        name: import_entities.STATISTICS_LABELS[entityId] || entityId,
+        name: displayName,
         type: stateType,
         role: resolveEntityRole(meta, writable),
         read: true,

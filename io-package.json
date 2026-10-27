@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.107",
+		"version": "0.10.108",
 		"messagebox": true,
 		"news": {
+			"0.10.108": {
+				"en": "Solarbank 3: expansion battery SOC/SOH/temp and per-input PV power (pv_1…4) with names (#20)",
+				"de": "Solarbank 3: Erweiterungsakku SOC/SOH/Temp und PV-Leistung pro Eingang (pv_1…4) inkl. Namen (#20)",
+				"ru": "Solarbank 3: SOC/SOH/темп. расширений и мощность PV по входам (pv_1…4) с именами (#20)",
+				"pt": "Solarbank 3: SOC/SOH/temp. das expansões e potência PV por entrada (pv_1…4) com nomes (#20)",
+				"nl": "Solarbank 3: uitbreidingsaccu SOC/SOH/temp en PV-vermogen per ingang (pv_1…4) met namen (#20)",
+				"fr": "Solarbank 3 : SOC/SOH/temp. des extensions et puissance PV par entrée (pv_1…4) avec noms (#20)",
+				"it": "Solarbank 3: SOC/SOH/temp. espansioni e potenza PV per ingresso (pv_1…4) con nomi (#20)",
+				"es": "Solarbank 3: SOC/SOH/temp. de expansiones y potencia PV por entrada (pv_1…4) con nombres (#20)",
+				"pl": "Solarbank 3: SOC/SOH/temp. ekspansji oraz moc PV na wejście (pv_1…4) z nazwami (#20)",
+				"uk": "Solarbank 3: SOC/SOH/темп. розширень і потужність PV на вхід (pv_1…4) з іменами (#20)",
+				"zh-cn": "Solarbank 3：扩展电池 SOC/SOH/温度及各路 PV 功率（pv_1…4）含名称（#20）"
+			},
 			"0.10.107": {
 				"en": "npm overrides: force node-gyp ^10.2.0 (Python 3.12+ / no distutils; Node 24 install compatibility)",
 				"de": "npm overrides: node-gyp ^10.2.0 erzwingen (Python 3.12+ / kein distutils; Install-Kompatibilität Node 24)",
@@ -81,19 +94,6 @@
 				"pl": "Solarbank 1: zapisywalne preset_charge_priority i preset_discharge_priority (set_home_load)",
 				"uk": "Solarbank 1: записувані preset_charge_priority і preset_discharge_priority (set_home_load)",
 				"zh-cn": "Solarbank 1：可写充电/放电优先级控制"
-			},
-			"0.10.85": {
-				"en": "Admin: refresh curtailment labels to pvforecast (new i18n keys; clears stale solarprognose text)",
-				"de": "Admin: Abregelungs-Texte auf pvforecast aktualisiert (neue i18n-Keys; alte solarprognose-Texte weg)",
-				"ru": "Админка: обновлены подписи ограничения генерации на pvforecast (новые i18n-ключи; устаревший текст solarprognose удалён)",
-				"pt": "Admin: atualização dos textos de curtailment para pvforecast (novas chaves i18n; remove texto antigo de solarprognose)",
-				"nl": "Admin: curtailment-teksten bijgewerkt naar pvforecast (nieuwe i18n-keys; oude solarprognose-tekst verwijderd)",
-				"fr": "Admin : libellés de curtailment mis à jour vers pvforecast (nouvelles clés i18n ; ancien texte solarprognose supprimé)",
-				"it": "Admin: etichette di curtailment aggiornate a pvforecast (nuove chiavi i18n; rimosso il testo obsoleto solarprognose)",
-				"es": "Admin: etiquetas de curtailment actualizadas a pvforecast (nuevas claves i18n; se elimina el texto antiguo de solarprognose)",
-				"pl": "Admin: etykiety curtailment zaktualizowane do pvforecast (nowe klucze i18n; usunięto stary tekst solarprognose)",
-				"uk": "Адмінка: підписи curtailment оновлено на pvforecast (нові i18n-ключі; старий текст solarprognose видалено)",
-				"zh-cn": "管理界面：限电规避文案改为 pvforecast"
 			}
 		},
 		"titleLang": {
