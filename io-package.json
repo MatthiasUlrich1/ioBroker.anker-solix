@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.106",
+		"version": "0.10.107",
 		"messagebox": true,
 		"news": {
+			"0.10.107": {
+				"en": "npm overrides: force node-gyp ^10.2.0 (Python 3.12+ / no distutils; Node 24 install compatibility)",
+				"de": "npm overrides: node-gyp ^10.2.0 erzwingen (Python 3.12+ / kein distutils; Install-Kompatibilität Node 24)",
+				"ru": "npm overrides: принудительно node-gyp ^10.2.0 (Python 3.12+ / без distutils; совместимость установки Node 24)",
+				"pt": "npm overrides: forçar node-gyp ^10.2.0 (Python 3.12+ / sem distutils; compatibilidade de instalação Node 24)",
+				"nl": "npm overrides: forceer node-gyp ^10.2.0 (Python 3.12+ / geen distutils; Node 24-installatiecompatibiliteit)",
+				"fr": "npm overrides : forcer node-gyp ^10.2.0 (Python 3.12+ / sans distutils ; compatibilité d'installation Node 24)",
+				"it": "npm overrides: forza node-gyp ^10.2.0 (Python 3.12+ / senza distutils; compatibilità installazione Node 24)",
+				"es": "npm overrides: forzar node-gyp ^10.2.0 (Python 3.12+ / sin distutils; compatibilidad de instalación Node 24)",
+				"pl": "npm overrides: wymuś node-gyp ^10.2.0 (Python 3.12+ / bez distutils; kompatybilność instalacji Node 24)",
+				"uk": "npm overrides: примусово node-gyp ^10.2.0 (Python 3.12+ / без distutils; сумісність встановлення Node 24)",
+				"zh-cn": "npm overrides：强制 node-gyp ^10.2.0（Python 3.12+ / 无需 distutils；兼容 Node 24 安装）"
+			},
 			"0.10.106": {
 				"en": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot automerge without pull_request_target",
 				"de": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot-Automerge ohne pull_request_target",

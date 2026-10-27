@@ -1,6 +1,6 @@
 {
   "name": "iobroker.anker-solix",
-  "version": "0.10.106",
+  "version": "0.10.107",
   "description": "ioBroker adapter for Anker Solix (based on ha-anker-solix)",
   "author": {
     "name": "MatthiasUlrich1",
@@ -31,6 +31,9 @@
     "linux",
     "win32"
   ],
+  "overrides": {
+    "node-gyp": "^10.2.0"
+  },
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3"
   },
