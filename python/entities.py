@@ -658,7 +658,6 @@ def writable_controls_for_device(
         "max_soc",
         "backup_soc",
         "auto_upgrade",
-        "ac_output_power_switch",
         "ac_fast_charge_switch_pps",
     }
     controls = [c for c in controls if c not in _read_only_controls]

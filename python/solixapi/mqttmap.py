@@ -138,30 +138,80 @@ _PPS_VERSIONS_0830 = {
 _A1722_0405 = {
     # C300 AC param info
     TOPIC: "param_info",
-    "a4": {NAME: "remaining_time_hours", FACTOR: 0.1, SIGNED: False},
-    "a7": {NAME: "usbc_1_power"},  # USB-C port 1 output power
-    "a8": {NAME: "usbc_2_power"},  # USB-C port 2 output power
-    "a9": {NAME: "usbc_3_power"},  # USB-C port 3 output power
-    "aa": {NAME: "usba_1_power"},  # USB-A port 1 output power
+    "a2": {
+        NAME: "ac_output_timeout_seconds"
+    },  # Active AC auto-off countdown in seconds
+    "a3": {
+        NAME: "dc_output_timeout_seconds"
+    },  # Active DC auto-off countdown in seconds
+    "a4": {
+        NAME: "remaining_time_hours",
+        FACTOR: 0.1,
+        SIGNED: False,
+    },  # 65535 (0xFFFF) when not discharging, e.g. full battery in AC pass-through
+    "a5": {
+        NAME: "ac_input_power"
+    },  # Duplicate of ad without DC input, also 0 W in AC pass-through
+    "a6": {NAME: "ac_output_power"},  # Same as ae but without LED power
+    "a7": {NAME: "usbc_1_power"},  # USB-C port 1 power
+    "a8": {NAME: "usbc_2_power"},  # USB-C port 2 power, supports charging
+    "a9": {NAME: "usbc_3_power"},  # USB-C port 3 power
+    "aa": {NAME: "usba_1_power"},  # USB-A port 1 power
     "ac": {NAME: "dc_input_power_total"},  # DC input power (solar/car charging)
-    "ad": {NAME: "ac_input_power_total"},  # Total AC Input in W (int)
-    "ae": {NAME: "ac_output_power_total"},  # Total AC Output in W (int)
-    "b7": {
-        NAME: "ac_output_power_switch"
-    },  # AC output switch: Disabled (0) or Enabled (1)
-    "b8": {NAME: "dc_charging_status"},  # None (0), Charging (1)
+    "ad": {
+        NAME: "input_power_total"
+    },  # Total Input in W (int), only while charging; reports 0 in AC pass-through with full battery
+    "ae": {
+        NAME: "output_power_total"
+    },  # Output in W (int), including the LED power. DC power inclusion to be validated
+    "b0": {NAME: "ac_input_plug_status"},  # 0: Disconnected, 1: connected
+    "b1": {NAME: "sw_version", "values": 1},  # Main firmware version
+    "b7": {NAME: "ac_output_power_status?"},  # Mirrors cb
+    "b8": {NAME: "charging_status"},  # Inactive (0), Solar (1), AC Input (2), Both (3)
     "b9": {NAME: "temperature", SIGNED: True},  # In Celsius
-    "ba": {NAME: "charging_status"},  # None (0), Discharging (1), Charging (2) ???
+    "ba": {NAME: "battery_status"},  # Inactive (0), Discharging (1), Charging (2)
     "bb": {NAME: "battery_soc"},  # Battery SOC
     "bc": {NAME: "battery_soh"},  # Battery Health
-    "c1": {
-        NAME: "dc_output_power_switch"
-    },  # DC output switch: Disabled (0) or Enabled (1)
+    "bd": {NAME: "usbc_1_status"},  # Inactive (0), Discharging (1)
+    "be": {NAME: "usbc_2_status"},  # Inactive (0), Discharging (1), Charging (2)
+    "bf": {NAME: "usbc_3_status"},  # Inactive (0), Discharging (1)
+    "c0": {NAME: "usba_1_status"},  # Inactive (0), Discharging (1)
+    "c1": {NAME: "dc_12v_1_status"},  # DC 12V status: Inactive (0), Discharging (1)
     "c5": {NAME: "device_sn"},  # Device serial number
     "c6": {NAME: "ac_input_limit"},  # Recharge limit
+    "c7": {
+        NAME: "device_timeout_minutes"
+    },  # never, 30, 60, 120, 240, 360, 720, 1440 minutes
+    "c8": {NAME: "display_timeout_seconds"},  # 20, 30, 60, 300, 1800 seconds
+    "cb": {NAME: "ac_output_power_switch"},  # Disabled (0) or Enabled (1)
+    "cc": {NAME: "dc_output_power_switch"},  # Disabled (0) or Enabled (1)
+    "cd": {NAME: "display_mode"},  # Brightness: Low (1), Medium (2), High (3)
+    "ce": {NAME: "ac_frequency"},  # AC frequency (Hz): 50 / 60
     "cf": {
-        NAME: "display_mode"
-    },  # Display brightness: Off (0), Low (1), Medium (2), High (3)
+        NAME: "light_mode"
+    },  # LED light: Off (0), Low (1), Medium (2), High (3), Blinking (4)
+    "d0": {NAME: "temp_unit_fahrenheit"},  # Celsius (0), Fahrenheit (1)
+    "d1": {NAME: "display_switch"},  # Off (0) or On (1)
+    "f7": {
+        BYTES: {
+            "00": {
+                NAME: "port_memory_switch",  # Disabled (0) or Enabled (1)
+                TYPE: DeviceHexDataTypes.ui.value,
+            }
+        }
+    },
+    "f8": {
+        BYTES: {
+            "00": {
+                NAME: "dc_12v_output_mode",  # Normal (1), Smart (2) - auto-off below 3W
+                TYPE: DeviceHexDataTypes.ui.value,
+            },
+            "01": {
+                NAME: "ac_output_mode",  # Normal (1), Smart (2) - auto-off when not charging and low power
+                TYPE: DeviceHexDataTypes.ui.value,
+            },
+        }
+    },
     "fe": {NAME: "msg_timestamp"},  # Message timestamp
 }
 
@@ -4109,6 +4159,20 @@ _PP_JSON = {
 SOLIXMQTTMAP: Final[dict] = {
     # PPS C300 AC
     "A1722": {
+        "0042": CMD_AC_OUTPUT_TIMEOUT_SEC  # AC output timeout: Custom Range 0-86400 seconds
+        | {
+            "a2": {
+                **CMD_AC_OUTPUT_TIMEOUT_SEC["a2"],
+                VALUE_MAX: 86100,
+            },
+        },
+        "0043": CMD_DC_OUTPUT_TIMEOUT_SEC  # DC output timeout: Custom Range 0-86100 seconds
+        | {
+            "a2": {
+                **CMD_DC_OUTPUT_TIMEOUT_SEC["a2"],
+                VALUE_MAX: 86100,
+            },
+        },
         "0044": CMD_AC_CHARGE_LIMIT  # AC Recharge Limit: 100, 200, 300, 330 W
         | {
             "a2": {
@@ -4116,17 +4180,24 @@ SOLIXMQTTMAP: Final[dict] = {
                 VALUE_OPTIONS: [100, 200, 300, 330],
             }
         },
+        "0045": CMD_DEVICE_TIMEOUT_MIN,  # Device timeout: 0 (Never), 30, 60, 120, 240, 360, 720, 1440 minutes
+        "0046": CMD_DISPLAY_TIMEOUT_SEC,  # 20, 30, 60, 300, 1800 seconds
         "004a": CMD_AC_OUTPUT_SWITCH,  # AC output switch: Disabled (0) or Enabled (1)
         "004b": CMD_DC_OUTPUT_SWITCH,  # DC output switch: Disabled (0) or Enabled (1)
-        "004f": CMD_LIGHT_MODE  # LED mode: Off (0), Low (1), Medium (2), High (3)
+        "004c": CMD_DISPLAY_MODE  # Display brightness: Low (1), Medium (2), High (3)
         | {
             "a2": {
-                **CMD_LIGHT_MODE["a2"],
-                VALUE_OPTIONS: {"off": 0, "low": 1, "medium": 2, "high": 3},
-            },
+                **CMD_DISPLAY_MODE["a2"],
+                VALUE_OPTIONS: {"low": 1, "medium": 2, "high": 3},
+            }
         },
+        "004f": CMD_LIGHT_MODE,  # LED mode: Off (0), Low (1), Medium (2), High (3), Blinking (4)
+        "0050": CMD_TEMP_UNIT,  # Temperature unit switch: Celsius (0) or Fahrenheit (1)
         "0052": CMD_DISPLAY_SWITCH,  # Display switch: Disabled (0) or Enabled (1)
         "0057": CMD_REALTIME_TRIGGER,  # for regular status messages 0405 etc
+        "0076": CMD_DC_12V_OUTPUT_MODE,  # Normal (0), Smart (1), Status!! Normal (1), Smart (2)
+        "0077": CMD_AC_OUTPUT_MODE,  # Normal (0), Smart (1), Status!! Normal (1), Smart (2)
+        "0079": CMD_PORT_MEMORY_SWITCH,  # Port Memory switch: Disabled (0) or Enabled (1)
         # Interval: ~3-5 seconds, but only with realtime trigger
         "0405": _A1722_0405,
         # Interval: Irregular, triggered on app actions, no fixed interval
@@ -4134,6 +4205,20 @@ SOLIXMQTTMAP: Final[dict] = {
     },
     # PPS C300X AC
     "A1723": {
+        "0042": CMD_AC_OUTPUT_TIMEOUT_SEC  # AC output timeout: Custom Range 0-86400 seconds
+        | {
+            "a2": {
+                **CMD_AC_OUTPUT_TIMEOUT_SEC["a2"],
+                VALUE_MAX: 86100,
+            },
+        },
+        "0043": CMD_DC_OUTPUT_TIMEOUT_SEC  # DC output timeout: Custom Range 0-86100 seconds
+        | {
+            "a2": {
+                **CMD_DC_OUTPUT_TIMEOUT_SEC["a2"],
+                VALUE_MAX: 86100,
+            },
+        },
         "0044": CMD_AC_CHARGE_LIMIT  # AC Recharge Limit: 100, 200, 300, 330 W
         | {
             "a2": {
@@ -4141,17 +4226,24 @@ SOLIXMQTTMAP: Final[dict] = {
                 VALUE_OPTIONS: [100, 200, 300, 330],
             }
         },
+        "0045": CMD_DEVICE_TIMEOUT_MIN,  # Device timeout: 0 (Never), 30, 60, 120, 240, 360, 720, 1440 minutes
+        "0046": CMD_DISPLAY_TIMEOUT_SEC,  # 20, 30, 60, 300, 1800 seconds
         "004a": CMD_AC_OUTPUT_SWITCH,  # AC output switch: Disabled (0) or Enabled (1)
         "004b": CMD_DC_OUTPUT_SWITCH,  # DC output switch: Disabled (0) or Enabled (1)
-        "004f": CMD_LIGHT_MODE  # LED mode: Off (0), Low (1), Medium (2), High (3)
+        "004c": CMD_DISPLAY_MODE  # Display brightness: Low (1), Medium (2), High (3)
         | {
             "a2": {
-                **CMD_LIGHT_MODE["a2"],
-                VALUE_OPTIONS: {"off": 0, "low": 1, "medium": 2, "high": 3},
-            },
+                **CMD_DISPLAY_MODE["a2"],
+                VALUE_OPTIONS: {"low": 1, "medium": 2, "high": 3},
+            }
         },
+        "004f": CMD_LIGHT_MODE,  # LED mode: Off (0), Low (1), Medium (2), High (3), Blinking (4)
+        "0050": CMD_TEMP_UNIT,  # Temperature unit switch: Celsius (0) or Fahrenheit (1)
         "0052": CMD_DISPLAY_SWITCH,  # Display switch: Disabled (0) or Enabled (1)
         "0057": CMD_REALTIME_TRIGGER,  # for regular status messages 0405 etc
+        "0076": CMD_DC_12V_OUTPUT_MODE,  # Normal (0), Smart (1), Status!! Normal (1), Smart (2)
+        "0077": CMD_AC_OUTPUT_MODE,  # Normal (0), Smart (1), Status!! Normal (1), Smart (2)
+        "0079": CMD_PORT_MEMORY_SWITCH,  # Port Memory switch: Disabled (0) or Enabled (1)
         # Interval: ~3-5 seconds, but only with realtime trigger
         "0405": _A1722_0405,
         # Interval: Irregular, triggered on app actions, no fixed interval
@@ -4437,6 +4529,151 @@ SOLIXMQTTMAP: Final[dict] = {
     },
     # PPS C2000 Gen 2
     "A1783": {
+        "0057": CMD_REALTIME_TRIGGER,  # for regular status messages 0405 etc
+        "0101": {
+            # AC command group
+            COMMAND_LIST: [
+                SolixMqttCommands.ac_output_switch,  # field a2
+                SolixMqttCommands.ac_output_timeout_seconds,  # field a3
+                SolixMqttCommands.ac_charge_limit,  # field a4
+                SolixMqttCommands.ac_output_mode_select,  # field a6
+            ],
+            SolixMqttCommands.ac_output_switch: CMD_COMMON_V2
+            | {
+                "a2": {
+                    NAME: "set_ac_output_switch",  # Disable (0) | Enable (1)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "ac_output_power_switch",
+                    VALUE_OPTIONS: {"off": 0, "on": 1},
+                },
+            },
+            SolixMqttCommands.ac_charge_limit: CMD_COMMON_V2
+            | {
+                "a4": {
+                    NAME: "set_ac_input_limit",  # in W; min: 200, max: 1800-2400, step: 100
+                    TYPE: DeviceHexDataTypes.sile.value,
+                    STATE_NAME: "ac_input_limit",
+                    VALUE_MIN: 200,
+                    VALUE_MAX: 1800,  # lowest limit for all variants
+                    VALUE_MAX_STATE: "ac_input_limit_max",  # adopt limit based on device variant
+                    VALUE_STEP: 100,
+                },
+            },
+            SolixMqttCommands.ac_output_timeout_seconds: CMD_COMMON_V2
+            | {
+                "a3": {
+                    NAME: "set_ac_output_timeout_seconds",  # Timeout seconds, custom range: 0-86400, step 300
+                    TYPE: DeviceHexDataTypes.var.value,
+                    STATE_NAME: "ac_output_timeout_seconds",
+                    VALUE_MIN: 0,
+                    VALUE_MAX: 86400,
+                    VALUE_STEP: 300,
+                },
+            },
+            SolixMqttCommands.ac_output_mode_select: CMD_COMMON_V2
+            | {
+                "a6": {
+                    NAME: "set_ac_output_mode",  # Normal (0), Smart (1)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "ac_output_mode",
+                    VALUE_OPTIONS: {"normal": 0, "smart": 1},
+                },
+            },
+        },
+        "0102": {
+            # DC command group
+            COMMAND_LIST: [
+                SolixMqttCommands.dc_output_switch,  # field a2
+                SolixMqttCommands.dc_12v_output_mode_select,  # field a4
+            ],
+            SolixMqttCommands.dc_output_switch: CMD_COMMON_V2
+            | {
+                "a2": {
+                    NAME: "set_dc_output_switch",  # Disable (0) | Enable (1)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "dc_output_power_switch",
+                    VALUE_OPTIONS: {"off": 0, "on": 1},
+                },
+            },
+            SolixMqttCommands.dc_12v_output_mode_select: CMD_COMMON_V2
+            | {
+                "a4": {
+                    NAME: "set_dc_12v_output_mode",  # Normal (0), Smart (0)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "dc_12v_output_mode",
+                    VALUE_OPTIONS: {"normal": 0, "smart": 1},
+                },
+            },
+        },
+        "0103": {
+            # Other command group
+            COMMAND_LIST: [
+                SolixMqttCommands.display_switch,  # field a2
+                SolixMqttCommands.display_mode_select,  # field a3
+                SolixMqttCommands.display_timeout_seconds,  # field a4
+                SolixMqttCommands.device_timeout_minutes,  # field a6
+                SolixMqttCommands.port_memory_switch,  # field a8
+                SolixMqttCommands.soc_limits,  # field aa, ab
+            ],
+            SolixMqttCommands.display_switch: CMD_COMMON_V2
+            | {
+                "a2": {
+                    NAME: "set_display_switch",  # Off (0), On (1)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "display_switch",
+                    VALUE_OPTIONS: {"off": 0, "on": 1},
+                },
+            },
+            SolixMqttCommands.display_mode_select: CMD_COMMON_V2
+            | {
+                "a3": {
+                    NAME: "set_display_mode",  # Low (1), Medium (2), High (3)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "display_mode",
+                    VALUE_OPTIONS: {"low": 1, "medium": 2, "high": 3},
+                },
+            },
+            SolixMqttCommands.display_timeout_seconds: CMD_COMMON_V2
+            | {
+                "a4": {
+                    NAME: "set_display_timeout_sec",  # 0 (Never), 10, 20, 30, 60, 300, 1800
+                    TYPE: DeviceHexDataTypes.sile.value,
+                    STATE_NAME: "display_timeout_seconds",
+                    VALUE_OPTIONS: [0, 10, 20, 30, 60, 300, 1800],
+                },
+            },
+            SolixMqttCommands.device_timeout_minutes: CMD_COMMON_V2
+            | {
+                "a6": {
+                    NAME: "set_device_timeout_min",  # 0 (Never), 30, 60, 120, 240, 360, 720, 1440
+                    TYPE: DeviceHexDataTypes.sile.value,
+                    STATE_NAME: "device_timeout_minutes",
+                    VALUE_OPTIONS: [0, 30, 60, 120, 240, 360, 720, 1440],
+                },
+            },
+            SolixMqttCommands.port_memory_switch: CMD_COMMON_V2
+            | {
+                "a8": {
+                    NAME: "set_port_memory_switch",  # Off (0), On (1)
+                    TYPE: DeviceHexDataTypes.ui.value,
+                    STATE_NAME: "port_memory_switch",
+                    VALUE_OPTIONS: {"off": 0, "on": 1},
+                },
+            },
+            SolixMqttCommands.soc_limits: CMD_SOC_LIMITS_V2,
+            # Contains fields aa ab for the limits
+            # aa = max_soc: 80, 85, 90, 95, 100 %
+            # ab = min_soc: 1, 5, 10, 15, 20 %
+        },
+        # Interval: ~3-5 seconds, but only with realtime trigger
+        "0421": _A1783_0421,
+        # Interval: Irregular, triggered on app actions, no fixed interval
+        "0830": _PPS_VERSIONS_0830,
+        # Interval: Irregular, maybe on changes or as response to App status request? Same content as 0421
+        "0900": _A1783_0421,
+    },
+    # PPS S2000 (AS220, device code E343) - Issue #24: reuses A1783 (C2000 Gen 2) command/telemetry map
+    "AS220": {
         "0057": CMD_REALTIME_TRIGGER,  # for regular status messages 0405 etc
         "0101": {
             # AC command group

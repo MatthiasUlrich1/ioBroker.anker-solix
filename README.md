@@ -203,7 +203,7 @@ Manufacturer: [Anker SOLIX](https://www.anker.com/anker-solix) ([support / downl
 | **smartmeter** | Anker 3-phase, US meter, Shelly 3EM / 3EM Pro, **Smart Meter Gen 2** (AE1X0) | yes | **Gen 2** (read-only) |
 | **inverter** | MI80 standalone (virtual site in API) | yes | — |
 | **smartplug** | Smart Plug 2500 W, **Smart Plug Gen 2** | yes | **Gen 2** (`power_switch`) |
-| **pps** / **solarbank_pps** | Portable power stations | mostly MQTT | — |
+| **pps** / **solarbank_pps** | Portable power stations, e.g. C300/C300X (A1722/A1723), **S2000** (AS220) | mostly MQTT | — |
 | **ev_charger** | V1 Smart EV Charger | mostly MQTT | **Modbus TCP** (local) |
 | **vehicle** | Virtual EVs for charger accounts | read-oriented | — |
 | **powerpanel** / **hes** | US Power Panel, X1 HES | limited API | **X1 Modbus TCP** (local) |
@@ -297,6 +297,10 @@ SOC reserve, PV/AC limits, grid export often need **API + MQTT** (hybrid). Third
 ### PPS / Solarbank PPS (F3000 + US meter)
 
 Automation-style home backup in US; control mainly via MQTT.
+
+### SOLIX C300X (A1723) / C300 (A1722) / S2000 (AS220)
+
+Enable **MQTT** for live telemetry and controls — the cloud API only exposes SOC for these portable power stations. Via MQTT: AC/DC output switches, light/display mode, display & device timeouts, AC (re)charge limit, port memory switch, plus sensors for temperature, remaining runtime, per-port USB-C/USB-A power, and charging status.
 
 ### EV charger (V1)
 
@@ -444,6 +448,11 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 ---
 
 ## Changelog
+
+### 0.10.109
+
+- **Feature (#24):** PPS **SOLIX S2000** (AS220) — native MQTT device classification and telemetry map (reuses C2000 Gen 2 path where applicable)
+- **Feature (#25):** PPS **SOLIX C300X** (A1723) — expanded MQTT telemetry; writable AC/DC limits, light, and display controls
 
 ### 0.10.108
 

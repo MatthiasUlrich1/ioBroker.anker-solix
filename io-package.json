@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.108",
+		"version": "0.10.109",
 		"messagebox": true,
 		"news": {
+			"0.10.109": {
+				"en": "PPS S2000 (AS220): native MQTT classification (#24); SOLIX C300X (A1723): expanded MQTT telemetry and writable AC/DC, light, and display controls (#25)",
+				"de": "PPS S2000 (AS220): native MQTT-Klassifikation (#24); SOLIX C300X (A1723): erweiterte MQTT-Telemetrie und schreibbare AC/DC-, Licht- und Display-Steuerung (#25)",
+				"ru": "PPS S2000 (AS220): родная MQTT-классификация (#24); SOLIX C300X (A1723): расширенная MQTT-телеметрия и записываемое управление AC/DC, светом и дисплеем (#25)",
+				"pt": "PPS S2000 (AS220): classificação MQTT nativa (#24); SOLIX C300X (A1723): telemetria MQTT alargada e controlo gravável de AC/DC, luz e ecrã (#25)",
+				"nl": "PPS S2000 (AS220): native MQTT-classificatie (#24); SOLIX C300X (A1723): uitgebreide MQTT-telemetrie en schrijfbare AC/DC-, licht- en displaybediening (#25)",
+				"fr": "PPS S2000 (AS220) : classification MQTT native (#24) ; SOLIX C300X (A1723) : télémétrie MQTT étendue et contrôles AC/DC, lumière et affichage en écriture (#25)",
+				"it": "PPS S2000 (AS220): classificazione MQTT nativa (#24); SOLIX C300X (A1723): telemetria MQTT estesa e controlli AC/DC, luce e display scrivibili (#25)",
+				"es": "PPS S2000 (AS220): clasificación MQTT nativa (#24); SOLIX C300X (A1723): telemetría MQTT ampliada y controles escribibles de AC/DC, luz y pantalla (#25)",
+				"pl": "PPS S2000 (AS220): natywna klasyfikacja MQTT (#24); SOLIX C300X (A1723): rozszerzona telemetria MQTT i zapisywalne sterowanie AC/DC, światłem i wyświetlaczem (#25)",
+				"uk": "PPS S2000 (AS220): рідна MQTT-класифікація (#24); SOLIX C300X (A1723): розширена MQTT-телеметрія та записуване керування AC/DC, світлом і дисплеєм (#25)",
+				"zh-cn": "PPS S2000（AS220）：原生 MQTT 分类（#24）；SOLIX C300X（A1723）：扩展 MQTT 遥测及可写 AC/DC、灯光与显示控制（#25）"
+			},
 			"0.10.108": {
 				"en": "Solarbank 3: expansion battery SOC/SOH/temp and per-input PV power (pv_1…4) with names (#20)",
 				"de": "Solarbank 3: Erweiterungsakku SOC/SOH/Temp und PV-Leistung pro Eingang (pv_1…4) inkl. Namen (#20)",
@@ -81,19 +94,6 @@
 				"pl": "Python: kontenery Docker Debian 12 Bookworm akceptują Python 3.11 best-effort (inne środowiska nadal wymagają 3.12+)",
 				"uk": "Python: контейнери Docker Debian 12 Bookworm допускають Python 3.11 best-effort (іншим середовищем потрібен 3.12+)",
 				"zh-cn": "Python：Debian 12 Bookworm Docker 容器可尽力使用 3.11（其他环境仍需 3.12+）"
-			},
-			"0.10.86": {
-				"en": "Solarbank 1: writable preset_charge_priority and preset_discharge_priority (set_home_load)",
-				"de": "Solarbank 1: preset_charge_priority und preset_discharge_priority schreibbar (set_home_load)",
-				"ru": "Solarbank 1: записываемые preset_charge_priority и preset_discharge_priority (set_home_load)",
-				"pt": "Solarbank 1: preset_charge_priority e preset_discharge_priority graváveis (set_home_load)",
-				"nl": "Solarbank 1: schrijfbare preset_charge_priority en preset_discharge_priority (set_home_load)",
-				"fr": "Solarbank 1 : preset_charge_priority et preset_discharge_priority accessibles en écriture (set_home_load)",
-				"it": "Solarbank 1: preset_charge_priority e preset_discharge_priority scrivibili (set_home_load)",
-				"es": "Solarbank 1: preset_charge_priority y preset_discharge_priority escribibles (set_home_load)",
-				"pl": "Solarbank 1: zapisywalne preset_charge_priority i preset_discharge_priority (set_home_load)",
-				"uk": "Solarbank 1: записувані preset_charge_priority і preset_discharge_priority (set_home_load)",
-				"zh-cn": "Solarbank 1：可写充电/放电优先级控制"
 			}
 		},
 		"titleLang": {

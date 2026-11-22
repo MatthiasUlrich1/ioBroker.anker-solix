@@ -93,7 +93,12 @@ def device_info(ctx_id: str, data: dict) -> dict[str, str | int]:
         "type": dev_type,
         "name": str(name),
         "site_id": str(data.get("site_id") or ""),
-        "model": str(data.get("model") or data.get("product_code") or ""),
+        "model": str(
+            data.get("model")
+            or data.get("device_pn")
+            or data.get("product_code")
+            or ""
+        ),
         "device_pn": str(data.get("device_pn") or data.get("product_code") or ""),
         "station_sn": str(data.get("station_sn") or ""),
         "generation": int(generation) if generation is not None else 0,
@@ -1073,6 +1078,16 @@ async def apply_control(
             int(value),
             ha_client=ha_client,
         )
+    elif control == "ac_input_limit":
+        # PPS AC (re)charge limit (A1722/A1723 etc.); reuses sb_ac_input_limit/ac_charge_limit
+        # MQTT commands, then API, via the same helper as the solarbank ac_charge_limit control.
+        result = await _set_ac_charge_limit(
+            api,
+            site_id,
+            device_id,
+            int(value),
+            ha_client=ha_client,
+        )
     elif control == "preset_usage_mode":
         result = await _set_preset_usage_mode(
             api, site_id, device_id, device, value
@@ -1111,6 +1126,175 @@ async def apply_control(
             result = {"mqtt": True}
         else:
             raise RuntimeError("ac_fast_charge_switch rejected (MQTT control failed)")
+    elif control == "ac_output_power_switch":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.ac_output_switch,
+            1 if bool(value) else 0,
+            "set_ac_output_switch",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("ac_output_power_switch rejected (MQTT control failed)")
+    elif control == "dc_output_power_switch":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.dc_output_switch,
+            1 if bool(value) else 0,
+            "set_dc_output_switch",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("dc_output_power_switch rejected (MQTT control failed)")
+    elif control in ("light_mode", "light_mode_select"):
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.light_mode_select,
+            value,
+            "set_light_mode",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError(f"{control} rejected (MQTT control failed)")
+    elif control == "display_switch":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.display_switch,
+            1 if bool(value) else 0,
+            "set_display_switch",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("display_switch rejected (MQTT control failed)")
+    elif control in ("display_mode", "display_mode_select"):
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.display_mode_select,
+            value,
+            "set_display_mode",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError(f"{control} rejected (MQTT control failed)")
+    elif control == "display_timeout_seconds":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.display_timeout_seconds,
+            int(value),
+            "set_display_timeout_sec",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("display_timeout_seconds rejected (MQTT control failed)")
+    elif control == "device_timeout_minutes":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.device_timeout_minutes,
+            int(value),
+            "set_device_timeout_min",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("device_timeout_minutes rejected (MQTT control failed)")
+    elif control == "ac_output_timeout_seconds":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.ac_output_timeout_seconds,
+            int(value),
+            "set_ac_output_timeout_seconds",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("ac_output_timeout_seconds rejected (MQTT control failed)")
+    elif control == "dc_output_timeout_seconds":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.dc_output_timeout_seconds,
+            int(value),
+            "set_dc_output_timeout_seconds",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("dc_output_timeout_seconds rejected (MQTT control failed)")
+    elif control in ("dc_12v_output_mode", "dc_12v_output_mode_select"):
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.dc_12v_output_mode_select,
+            value,
+            "set_dc_12v_output_mode",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError(f"{control} rejected (MQTT control failed)")
+    elif control in ("ac_output_mode", "ac_output_mode_select"):
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.ac_output_mode_select,
+            value,
+            "set_ac_output_mode",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError(f"{control} rejected (MQTT control failed)")
+    elif control == "port_memory_switch":
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.port_memory_switch,
+            1 if bool(value) else 0,
+            "set_port_memory_switch",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("port_memory_switch rejected (MQTT control failed)")
+    elif control in ("temp_unit_fahrenheit", "temp_unit_switch"):
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.temp_unit_switch,
+            1 if bool(value) else 0,
+            "set_temp_unit_fahrenheit",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError(f"{control} rejected (MQTT control failed)")
     elif control in ("charge_upper_limit", "discharge_lower_limit"):
         result = await _set_station_soc_limit(
             api,

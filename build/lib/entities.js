@@ -188,6 +188,14 @@ const SENSOR_ENTITIES = [
   { id: "pps_battery_soc", kind: "sensor", role: "value.battery", unit: "%" },
   { id: "pps_input_power", kind: "sensor", role: "value.power", unit: "W" },
   { id: "pps_output_power", kind: "sensor", role: "value.power", unit: "W" },
+  { id: "pps_temperature", kind: "sensor", role: "value.temperature", unit: "\xB0C" },
+  { id: "pps_remaining_time_hours", kind: "sensor", role: "value", unit: "h" },
+  { id: "pps_charging_status", kind: "sensor", role: "value" },
+  { id: "pps_usbc_1_power", kind: "sensor", role: "value.power", unit: "W" },
+  { id: "pps_usbc_2_power", kind: "sensor", role: "value.power", unit: "W" },
+  { id: "pps_usbc_3_power", kind: "sensor", role: "value.power", unit: "W" },
+  { id: "pps_usba_1_power", kind: "sensor", role: "value.power", unit: "W" },
+  { id: "pps_dc_input_power_total", kind: "sensor", role: "value.power", unit: "W" },
   { id: "smartplug_power", kind: "sensor", role: "value.power", unit: "W" },
   { id: "smartplug_energy_today", kind: "sensor", role: "value.energy", unit: "kWh" },
   { id: "evcharger_power", kind: "sensor", role: "value.power", unit: "W" },
@@ -371,7 +379,36 @@ const CONTROL_ENTITIES = [
   { id: "backup_soc", kind: "number", role: "level.battery", unit: "%", min: 0, max: 100 },
   { id: "auto_upgrade", kind: "switch", role: "switch" },
   { id: "ac_output_power_switch", kind: "switch", role: "switch" },
-  { id: "ac_fast_charge_switch_pps", kind: "switch", role: "switch" }
+  { id: "ac_fast_charge_switch_pps", kind: "switch", role: "switch" },
+  { id: "dc_output_power_switch", kind: "switch", role: "switch" },
+  { id: "light_mode_select", kind: "number", role: "value.mode", min: 0, max: 4 },
+  { id: "display_switch", kind: "switch", role: "switch" },
+  { id: "display_mode_select", kind: "number", role: "value.mode", min: 0, max: 3 },
+  {
+    id: "display_timeout_seconds",
+    kind: "number",
+    role: "level",
+    unit: "s",
+    min: 20,
+    max: 1800
+  },
+  {
+    id: "device_timeout_minutes",
+    kind: "number",
+    role: "level",
+    unit: "min",
+    min: 0,
+    max: 1440
+  },
+  {
+    id: "ac_input_limit",
+    kind: "number",
+    role: "level.power",
+    unit: "W",
+    min: 100,
+    max: 330
+  },
+  { id: "port_memory_switch", kind: "switch", role: "switch" }
 ];
 const PERIOD_METRIC_SUFFIXES = [
   "solar_production",
