@@ -173,6 +173,14 @@ EXTENDED_SENSOR_ENTITIES: list[dict[str, Any]] = [
         "groups": [GROUP_DIAGNOSTICS],
     },
     {
+        "id": "device_soc",
+        "keys": ["main_battery_soc"],
+        "unit": "%",
+        "role": "value.battery",
+        "types": [SOLARBANK, COMBINER],
+        "groups": [GROUP_DIAGNOSTICS],
+    },
+    {
         "id": "err_code",
         "keys": ["err_code", "error_code"],
         "role": "value",

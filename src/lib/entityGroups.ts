@@ -136,6 +136,7 @@ export const ENTITY_ID_GROUPS: Record<string, string[]> = {
 	charging_status_desc: [ENTITY_GROUP_DIAGNOSTICS],
 	sw_version: [ENTITY_GROUP_DIAGNOSTICS],
 	device_temperature: [ENTITY_GROUP_DIAGNOSTICS],
+	device_soc: [ENTITY_GROUP_DIAGNOSTICS],
 	err_code: [ENTITY_GROUP_DIAGNOSTICS],
 	device_tag: [ENTITY_GROUP_DIAGNOSTICS],
 	inverter_info: [ENTITY_GROUP_DIAGNOSTICS],

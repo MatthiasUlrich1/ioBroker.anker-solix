@@ -449,6 +449,12 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 
 ## Changelog
 
+### 0.10.110
+
+- **Feature (#22):** Main battery SOC — `device_soc` sensor under Diagnostics (`value.battery`, %)
+- **Repo checker (#14):** `@iobroker/testing` 6.3.2 (E0036); macOS (`darwin`) added to `package.json` `os` and CI matrix; `testing-action-check@v2` (S3044)
+- **Workflows:** Dependabot automerge PR #21 closed — changes already covered by #14
+
 ### 0.10.109
 
 - **Feature (#24):** PPS **SOLIX S2000** (AS220) — native MQTT device classification and telemetry map (reuses C2000 Gen 2 path where applicable)

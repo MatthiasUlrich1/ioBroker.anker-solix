@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.109",
+		"version": "0.10.110",
 		"messagebox": true,
 		"news": {
+			"0.10.110": {
+				"en": "Main battery SOC `device_soc` (#22); repo checker: @iobroker/testing 6.3.2, darwin/macos CI, testing-action-check@v2; Dependabot automerge PR #21 closed as already addressed (#14)",
+				"de": "Hauptakku-SOC `device_soc` (#22); Repo-Checker: @iobroker/testing 6.3.2, darwin/macos-CI, testing-action-check@v2; Dependabot-Automerge-PR #21 geschlossen (bereits in #14)",
+				"ru": "SOC главной батареи `device_soc` (#22); проверка репозитория: @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2; PR #21 Dependabot automerge закрыт — уже учтено в #14",
+				"pt": "SOC da bateria principal `device_soc` (#22); verificação do repositório: @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2; PR #21 de automerge Dependabot fechado — já tratado em #14",
+				"nl": "Hoofdaccu-SOC `device_soc` (#22); repo-checker: @iobroker/testing 6.3.2, darwin/macos-CI, testing-action-check@v2; Dependabot-automerge-PR #21 gesloten — al in #14",
+				"fr": "SOC batterie principale `device_soc` (#22) ; repo-checker : @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2 ; PR #21 automerge Dependabot fermé — déjà couvert par #14",
+				"it": "SOC batteria principale `device_soc` (#22); repo checker: @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2; PR #21 automerge Dependabot chiuso — già in #14",
+				"es": "SOC de batería principal `device_soc` (#22); comprobación del repositorio: @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2; PR #21 automerge Dependabot cerrado — ya cubierto en #14",
+				"pl": "SOC głównej baterii `device_soc` (#22); repo checker: @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2; PR #21 automerge Dependabot zamknięty — już w #14",
+				"uk": "SOC головної батареї `device_soc` (#22); перевірка репозиторію: @iobroker/testing 6.3.2, CI darwin/macos, testing-action-check@v2; PR #21 Dependabot automerge закрито — вже в #14",
+				"zh-cn": "主电池 SOC `device_soc`（#22）；仓库检查：@iobroker/testing 6.3.2、darwin/macos CI、testing-action-check@v2；Dependabot 自动合并 PR #21 已关闭（#14 已涵盖）"
+			},
 			"0.10.109": {
 				"en": "PPS S2000 (AS220): native MQTT classification (#24); SOLIX C300X (A1723): expanded MQTT telemetry and writable AC/DC, light, and display controls (#25)",
 				"de": "PPS S2000 (AS220): native MQTT-Klassifikation (#24); SOLIX C300X (A1723): erweiterte MQTT-Telemetrie und schreibbare AC/DC-, Licht- und Display-Steuerung (#25)",
@@ -81,19 +94,6 @@
 				"pl": "Tylko Modbus: bez chmury Anker/Python; instancja jest zielona, gdy lokalne urządzenie Modbus jest podłączone",
 				"uk": "Лише Modbus: без хмари Anker/Python; інстанс зелений, коли локальний Modbus-пристрій підключено",
 				"zh-cn": "仅 Modbus：跳过云/Python；本地设备已连接时实例为绿色"
-			},
-			"0.10.87": {
-				"en": "Python: Debian 12 Bookworm Docker containers accept Python 3.11 best-effort (others still need 3.12+)",
-				"de": "Python: Debian-12-Bookworm-Docker-Container akzeptieren Python 3.11 best-effort (sonst weiter 3.12+)",
-				"ru": "Python: контейнеры Debian 12 Bookworm Docker допускают Python 3.11 по возможности (остальным нужен 3.12+)",
-				"pt": "Python: contentores Docker Debian 12 Bookworm aceitam Python 3.11 em modo best-effort (os restantes precisam de 3.12+)",
-				"nl": "Python: Debian 12 Bookworm Docker-containers accepteren Python 3.11 best-effort (andere omgevingen blijven 3.12+ nodig hebben)",
-				"fr": "Python : les conteneurs Docker Debian 12 Bookworm acceptent Python 3.11 en best-effort (les autres nécessitent toujours 3.12+)",
-				"it": "Python: i container Docker Debian 12 Bookworm accettano Python 3.11 in best-effort (gli altri richiedono ancora 3.12+)",
-				"es": "Python: los contenedores Docker Debian 12 Bookworm aceptan Python 3.11 en best-effort (los demás siguen necesitando 3.12+)",
-				"pl": "Python: kontenery Docker Debian 12 Bookworm akceptują Python 3.11 best-effort (inne środowiska nadal wymagają 3.12+)",
-				"uk": "Python: контейнери Docker Debian 12 Bookworm допускають Python 3.11 best-effort (іншим середовищем потрібен 3.12+)",
-				"zh-cn": "Python：Debian 12 Bookworm Docker 容器可尽力使用 3.11（其他环境仍需 3.12+）"
 			}
 		},
 		"titleLang": {

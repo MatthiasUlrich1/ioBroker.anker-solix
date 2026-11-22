@@ -35,6 +35,7 @@ def test_mqtt_exp_and_pv_power() -> None:
             "pv_2_power": 110,
             "pv_3_power": 0,
             "pv_4_power": 45,
+            "main_battery_soc": 85,
         },
     }
     entities = _extract(data)
@@ -46,6 +47,7 @@ def test_mqtt_exp_and_pv_power() -> None:
     assert entities["pv_2_power"] == 110
     assert entities["pv_3_power"] == 0
     assert entities["pv_4_power"] == 45
+    assert entities["device_soc"] == 85
     assert "exp_2_soc" not in entities
 
 

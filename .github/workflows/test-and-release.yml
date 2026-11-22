@@ -29,8 +29,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Pinned tag required: floating @v2 is not published on GitHub (adapter-check W3042).
-      - uses: ioBroker/testing-action-check@v2.0.0
+      - uses: ioBroker/testing-action-check@v2
         with:
           node-version: "24.x"
           type-checking: true
@@ -46,7 +45,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22.x, 24.x, 26.x]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: ioBroker/testing-action-adapter@v1

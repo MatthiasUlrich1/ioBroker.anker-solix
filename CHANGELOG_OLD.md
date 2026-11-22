@@ -2,7 +2,12 @@
 
 Current releases **0.10.63 and newer** (except the latest seven messagebox news entries) are documented in [README.md](README.md#changelog).
 
-Removed from `common.news` when trimming to the ioBroker repository limit of **7** entries: 0.10.63 and older (see README), plus versions never published to npm (e.g. 0.10.50–0.10.53, 0.10.58), unpublished **0.10.82** / **0.10.83** (folded into 0.10.84), unpublished **0.10.88** / **0.10.89** (GitHub-only; folded into 0.10.90), **0.10.91**–**0.10.100** (GitHub-only VIS/Modbus work; see README changelog), **0.10.84**, **0.10.81**, **0.10.69**, **0.10.70**, **0.10.71**, **0.10.72**, **0.10.73**, **0.10.74**, **0.10.75**, **0.10.77**, **0.10.78**, **0.10.79**, **0.10.85**, and **0.10.86**.
+Removed from `common.news` when trimming to the ioBroker repository limit of **7** entries: 0.10.63 and older (see README), plus versions never published to npm (e.g. 0.10.50–0.10.53, 0.10.58), unpublished **0.10.82** / **0.10.83** (folded into 0.10.84), unpublished **0.10.88** / **0.10.89** (GitHub-only; folded into 0.10.90), **0.10.91**–**0.10.100** (GitHub-only VIS/Modbus work; see README changelog), **0.10.84**, **0.10.81**, **0.10.69**, **0.10.70**, **0.10.71**, **0.10.72**, **0.10.73**, **0.10.74**, **0.10.75**, **0.10.77**, **0.10.78**, **0.10.79**, **0.10.85**, **0.10.86**, and **0.10.87**.
+
+## 0.10.87
+
+- **en:** Python: Debian 12 Bookworm Docker containers accept Python 3.11 best-effort (others still need 3.12+)
+- **de:** Python: Debian-12-Bookworm-Docker-Container akzeptieren Python 3.11 best-effort (sonst weiter 3.12+)
 
 ## 0.10.86
 
