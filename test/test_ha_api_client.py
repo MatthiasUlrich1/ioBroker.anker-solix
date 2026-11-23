@@ -1,6 +1,8 @@
 """Unit tests for IoBrokerAnkerApiClient helpers."""
 
+import asyncio
 import sys
+import time
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
@@ -11,6 +13,7 @@ if str(PYTHON_DIR) not in sys.path:
     sys.path.insert(0, str(PYTHON_DIR))
 
 from ha_api_client import IoBrokerAnkerApiClient  # noqa: E402
+from solixapi.mqttcmdmap import SolixMqttCommands  # noqa: E402
 
 
 def _minimal_config(**overrides) -> dict:
@@ -76,3 +79,60 @@ def test_period_rotation_fetches_one_period_at_a_time(
     assert len(second) == 1
     assert len(third) == 1
     assert first != second != third
+
+
+def _mqtt_device(controls: dict, is_passive: bool = False) -> MagicMock:
+    mdev = MagicMock()
+    mdev.controls = controls
+    mdev.is_passive.return_value = is_passive
+    mdev.realtime_trigger = AsyncMock(return_value={})
+    mdev.status_request = AsyncMock(return_value={})
+    return mdev
+
+
+def test_ensure_mqtt_realtime_triggers_pps_device(
+    client: IoBrokerAnkerApiClient,
+) -> None:
+    """PPS devices with realtime_trigger support get a 0057 trigger sent."""
+    client.api.mqttsession = MagicMock()
+    client.api.mqttsession.is_connected.return_value = True
+    mdev = _mqtt_device({SolixMqttCommands.realtime_trigger: {}})
+    client.mqtt_devices = {"SN1": mdev}
+
+    asyncio.run(client._ensure_mqtt_realtime())
+
+    mdev.realtime_trigger.assert_awaited_once()
+    mdev.status_request.assert_not_awaited()
+    assert "SN1" in client._mqtt_last_trigger
+
+
+def test_ensure_mqtt_realtime_falls_back_to_status_request(
+    client: IoBrokerAnkerApiClient,
+) -> None:
+    """Devices without realtime_trigger fall back to status_request."""
+    client.api.mqttsession = MagicMock()
+    client.api.mqttsession.is_connected.return_value = True
+    mdev = _mqtt_device({SolixMqttCommands.status_request: {}})
+    client.mqtt_devices = {"SN2": mdev}
+
+    asyncio.run(client._ensure_mqtt_realtime())
+
+    mdev.status_request.assert_awaited_once()
+    assert "SN2" in client._mqtt_last_trigger
+
+
+def test_ensure_mqtt_realtime_skips_passive_and_recent(
+    client: IoBrokerAnkerApiClient,
+) -> None:
+    """Passive devices and recently-triggered devices are skipped."""
+    client.api.mqttsession = MagicMock()
+    client.api.mqttsession.is_connected.return_value = True
+    passive = _mqtt_device({SolixMqttCommands.realtime_trigger: {}}, is_passive=True)
+    recent = _mqtt_device({SolixMqttCommands.realtime_trigger: {}})
+    client.mqtt_devices = {"PASSIVE": passive, "RECENT": recent}
+    client._mqtt_last_trigger["RECENT"] = time.time()
+
+    asyncio.run(client._ensure_mqtt_realtime())
+
+    passive.realtime_trigger.assert_not_awaited()
+    recent.realtime_trigger.assert_not_awaited()

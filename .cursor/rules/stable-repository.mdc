@@ -1,0 +1,25 @@
+---
+description: Never promote brand-new npm releases to ioBroker STABLE; bake on LATEST first
+alwaysApply: true
+---
+
+# Stable repository bake time
+
+When updating `ioBroker/ioBroker.repositories` `sources-dist-stable.json` (or responding to stable-update bot issues):
+
+## Hard rules
+
+1. **Never** pin a version that was released **today** or within the last few days to STABLE.
+2. A release must sit on **LATEST** (npm + latest repo) for **at least 1–2 weeks**, with a meaningful number of installations and **no serious new issues**, before proposing it for STABLE.
+3. Prefer the version named in the stable-update issue (e.g. #23 asked for `0.10.108`) when that version already meets bake time — do **not** jump to `npm latest` just because a newer tag exists.
+4. **Hotfix exception only** for crashers / blocked usage: minimize the diff, say so explicitly on the PR, and ping `mcm1957` / `Apollon77`. Even hotfixes need **≥1 day** on LATEST with a few installs unless individually agreed.
+
+## Do not
+
+- Open STABLE PRs for versions that trigger `STABLE-0-day-PR` (same-day / not yet on LATEST).
+- Assume “repochecker NO errors” means STABLE-ready — that only clears quality gates, not bake time.
+- Bundle brand-new feature releases into a STABLE bump.
+
+## Docs
+
+See also [docs/release-policy.md](docs/release-policy.md).

@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.110",
+		"version": "0.10.111",
 		"messagebox": true,
 		"news": {
+			"0.10.111": {
+				"en": "Fix (#24): MQTT realtime_trigger refresh so PPS (e.g. AS220 S2000) get live telemetry without Anker app",
+				"de": "Fix (#24): MQTT realtime_trigger-Aktualisierung — PPS (z. B. AS220 S2000) erhalten Live-Telemetrie ohne Anker-App",
+				"ru": "Исправление (#24): обновление MQTT realtime_trigger — PPS (напр. AS220 S2000) получают живую телеметрию без приложения Anker",
+				"pt": "Correção (#24): atualização MQTT realtime_trigger — PPS (ex. AS220 S2000) recebem telemetria em tempo real sem app Anker",
+				"nl": "Fix (#24): MQTT realtime_trigger-verversing — PPS (bijv. AS220 S2000) krijgen live telemetrie zonder Anker-app",
+				"fr": "Correctif (#24) : actualisation MQTT realtime_trigger — les PPS (ex. AS220 S2000) reçoivent la télémétrie en direct sans appli Anker",
+				"it": "Fix (#24): aggiornamento MQTT realtime_trigger — PPS (es. AS220 S2000) ricevono telemetria live senza app Anker",
+				"es": "Corrección (#24): actualización MQTT realtime_trigger — PPS (p. ej. AS220 S2000) reciben telemetría en vivo sin app Anker",
+				"pl": "Poprawka (#24): odświeżanie MQTT realtime_trigger — PPS (np. AS220 S2000) otrzymują telemetry na żywo bez aplikacji Anker",
+				"uk": "Виправлення (#24): оновлення MQTT realtime_trigger — PPS (напр. AS220 S2000) отримують живу телеметрію без застосунку Anker",
+				"zh-cn": "修复（#24）：MQTT realtime_trigger 刷新 — PPS（如 AS220 S2000）无需 Anker 应用即可获取实时遥测"
+			},
 			"0.10.110": {
 				"en": "Main battery SOC `device_soc` (#22); repo checker: @iobroker/testing 6.3.2, darwin/macos CI, testing-action-check@v2; Dependabot automerge PR #21 closed as already addressed (#14)",
 				"de": "Hauptakku-SOC `device_soc` (#22); Repo-Checker: @iobroker/testing 6.3.2, darwin/macos-CI, testing-action-check@v2; Dependabot-Automerge-PR #21 geschlossen (bereits in #14)",
@@ -81,19 +94,6 @@
 				"pl": "Autosynchronizacja widgetów VIS/VIS-2; pulpity HTML; poprawka dziennego kWh SB4; CI Node.js 22/24/26",
 				"uk": "Автосинхронізація віджетів VIS/VIS-2; HTML-дашборди; виправлення денних кВт·год SB4; CI Node.js 22/24/26",
 				"zh-cn": "VIS/VIS-2 Widget 自动同步；HTML 仪表盘；SB4 日电量修复；Node.js 22/24/26 CI"
-			},
-			"0.10.90": {
-				"en": "Modbus only: skip Anker cloud/Python; instance is green when a local Modbus device is connected",
-				"de": "Nur Modbus: keine Anker-Cloud/Python; Instanz ist grün, sobald ein lokales Modbus-Gerät verbunden ist",
-				"ru": "Режим только Modbus: без облака Anker/Python; инстанс зелёный при подключении локального устройства",
-				"pt": "Somente Modbus: sem nuvem Anker/Python; instância fica verde quando um dispositivo Modbus local está conectado",
-				"nl": "Alleen Modbus: geen Anker-cloud/Python; instance is groen wanneer een lokaal Modbus-apparaat is verbonden",
-				"fr": "Modbus uniquement : pas de cloud Anker/Python ; l'instance est verte lorsqu'un appareil Modbus local est connecté",
-				"it": "Solo Modbus: niente cloud Anker/Python; l'istanza è verde quando un dispositivo Modbus locale è connesso",
-				"es": "Solo Modbus: sin nube Anker/Python; la instancia está en verde cuando hay un dispositivo Modbus local conectado",
-				"pl": "Tylko Modbus: bez chmury Anker/Python; instancja jest zielona, gdy lokalne urządzenie Modbus jest podłączone",
-				"uk": "Лише Modbus: без хмари Anker/Python; інстанс зелений, коли локальний Modbus-пристрій підключено",
-				"zh-cn": "仅 Modbus：跳过云/Python；本地设备已连接时实例为绿色"
 			}
 		},
 		"titleLang": {

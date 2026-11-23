@@ -449,6 +449,10 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 
 ## Changelog
 
+### 0.10.111
+
+- **Fix (#24):** MQTT `realtime_trigger` refresh — PPS **SOLIX S2000** (AS220) and similar devices receive live telemetry over MQTT without keeping the Anker mobile app connected (`python/ha_api_client.py`)
+
 ### 0.10.110
 
 - **Feature (#22):** Main battery SOC — `device_soc` sensor under Diagnostics (`value.battery`, %)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import time
@@ -14,6 +15,7 @@ from solixapi.api import AnkerSolixApi
 from solixapi.apitypes import ApiCategories, SolixDefaults, SolixDeviceType
 from solixapi.mqtt_device import SolixMqttDevice
 from solixapi.mqtt_factory import SolixMqttDeviceFactory
+from solixapi.mqttcmdmap import SolixMqttCommands
 
 # Same defaults as custom_components/anker_solix/api_client.py
 MIN_DEVICE_REFRESH: int = 60
@@ -80,6 +82,8 @@ class IoBrokerAnkerApiClient:
         self.deferred_data = False
         self.active_device_refresh = False
         self.mqtt_devices: dict[str, SolixMqttDevice] = {}
+        self._mqtt_last_trigger: dict[str, float] = {}
+        self._mqtt_trigger_warned: set[str] = set()
         self._state_path = cache_dir / "poll_client_state.json"
         self._logger = logger
         self._max_total_ac_applied: dict[str, int] = {}
@@ -251,6 +255,7 @@ class IoBrokerAnkerApiClient:
             self.active_device_refresh = False
             await self.check_mqtt_session()
             if self.api.mqttsession and self.api.mqttsession.is_connected():
+                await self._ensure_mqtt_realtime()
                 self.api.update_device_mqtt()
                 self.reapply_max_total_ac_stamps()
         elif self._startup and not self.deferred_data:
@@ -265,6 +270,7 @@ class IoBrokerAnkerApiClient:
         self._log_daily_energy_outcome(daily_energy_fetched)
 
         if self._mqtt_usage and self.api.mqttsession and self.api.mqttsession.is_connected():
+            await self._ensure_mqtt_realtime()
             self.api.update_device_mqtt()
             self.reapply_max_total_ac_stamps()
 
@@ -279,6 +285,41 @@ class IoBrokerAnkerApiClient:
             "dailyEnergyHasValues": daily_energy_fetched
             and self._daily_energy_has_values(),
         }
+
+    async def _ensure_mqtt_realtime(self) -> None:
+        """Re-arm MQTT realtime_trigger (0057) so PPS telemetry keeps flowing without the app open."""
+        if not self.api.mqttsession or not self.api.mqttsession.is_connected():
+            return
+        if not self.mqtt_devices:
+            return
+        timeout = SolixDefaults.TRIGGER_TIMEOUT_DEF
+        refresh_after = max(60, timeout - 60)
+        now = time.time()
+        for sn, mdev in self.mqtt_devices.items():
+            if mdev.is_passive():
+                continue
+            last = self._mqtt_last_trigger.get(sn)
+            if last is not None and now - last < refresh_after:
+                continue
+            triggered = False
+            if SolixMqttCommands.realtime_trigger in (mdev.controls or {}):
+                with contextlib.suppress(Exception):
+                    if await mdev.realtime_trigger(timeout=timeout) is not None:
+                        triggered = True
+            elif SolixMqttCommands.status_request in (mdev.controls or {}) or (
+                hasattr(mdev, "status_request")
+                and callable(getattr(mdev, "status_request", None))
+            ):
+                with contextlib.suppress(Exception):
+                    if await mdev.status_request() is not None:
+                        triggered = True
+            if triggered:
+                self._mqtt_last_trigger[sn] = now
+                self._mqtt_trigger_warned.discard(sn)
+                self._logger.debug("MQTT realtime trigger refreshed for %s", sn)
+            elif sn not in self._mqtt_trigger_warned:
+                self._mqtt_trigger_warned.add(sn)
+                self._logger.warning("MQTT realtime trigger failed for %s", sn)
 
     async def check_mqtt_session(self) -> None:
         """Same as HA check_mqtt_session (live mode, no file poller)."""
@@ -300,13 +341,17 @@ class IoBrokerAnkerApiClient:
                         ).create_device()
                     ):
                         self.mqtt_devices[sn] = mdev
+                await self._ensure_mqtt_realtime()
             else:
                 self._logger.error("Failed to start MQTT session")
                 self.mqtt_devices.clear()
+                self._mqtt_last_trigger.clear()
+                self._mqtt_trigger_warned.clear()
         else:
             for mdev in self.mqtt_devices.values():
                 if not mdev.is_subscribed() and not self.subscribe_device(mdev.device):
                     mdev.mqttdata.clear()
+            await self._ensure_mqtt_realtime()
 
     def subscribe_device(self, device_dict: dict) -> bool:
         if not self.api.mqttsession or not self.api.mqttsession.is_connected():
@@ -383,6 +428,8 @@ class IoBrokerAnkerApiClient:
         if self._mqtt_usage and not mqtt_usage:
             self.api.stopMqttSession()
             self.mqtt_devices.clear()
+            self._mqtt_last_trigger.clear()
+            self._mqtt_trigger_warned.clear()
         self._mqtt_usage = mqtt_usage
         self.api.apisession.requestDelay(
             float(config.get("requestDelay", DEFAULT_DELAY_TIME))
