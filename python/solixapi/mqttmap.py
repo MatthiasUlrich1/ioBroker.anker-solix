@@ -761,6 +761,14 @@ _A1783_0421 = {
                 NAME: "port_memory_switch",  # Output Port Memory switch: Disabled (0) or Enabled (1)
                 TYPE: DeviceHexDataTypes.ui.value,
             },
+            "23": {
+                NAME: "max_soc",  # max_soc: 80, 85, 90, 95, 100 %
+                TYPE: DeviceHexDataTypes.ui.value,
+            },
+            "24": {
+                NAME: "min_soc",  # min_soc: 1, 5, 10, 15, 20 %
+                TYPE: DeviceHexDataTypes.ui.value,
+            },
         }
     },
     "a5": {
@@ -787,7 +795,7 @@ _A1783_0421 = {
                 TYPE: DeviceHexDataTypes.sile.value,
             },
             "02": {
-                NAME: "ac_input_power",  # Input power total charge
+                NAME: "ac_input_power_total",  # AC Input power total, mirrors a7.04
                 TYPE: DeviceHexDataTypes.sile.value,
             },
             "04": {
@@ -795,11 +803,13 @@ _A1783_0421 = {
                 TYPE: DeviceHexDataTypes.sile.value,
             },
             "06": {
-                NAME: "unknown_a6_06?",  # tbd
+                NAME: "remaining_time_hours",  # hours with factor 0.1
                 TYPE: DeviceHexDataTypes.sile.value,
+                FACTOR: 0.1,
+                SIGNED: False,
             },
             "08": {
-                NAME: "unknown_a6_08?",  # tbd
+                NAME: "main_battery_soc",  # SOC of main battery only
                 TYPE: DeviceHexDataTypes.ui.value,
             },
         },
@@ -815,11 +825,11 @@ _A1783_0421 = {
                 TYPE: DeviceHexDataTypes.sile.value,
             },
             "03": {
-                NAME: "unknown_power_switch_a7?",  # Off (0), On (1)
+                NAME: "ac_input_plug_status",  # 0: Disconnected, 1: connected, 2: disabled (Battery-Only Power On)
                 TYPE: DeviceHexDataTypes.ui.value,
             },
             "04": {
-                NAME: "unknown_power_a7?",
+                NAME: "ac_input_power",  # AC input, mirrors a6.02
                 TYPE: DeviceHexDataTypes.sile.value,
             },
         }

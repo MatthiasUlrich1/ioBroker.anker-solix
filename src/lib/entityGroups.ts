@@ -183,6 +183,7 @@ export const ENTITY_ID_GROUPS: Record<string, string[]> = {
 	pps_battery_soc: [ENTITY_GROUP_PPS],
 	pps_input_power: [ENTITY_GROUP_PPS],
 	pps_output_power: [ENTITY_GROUP_PPS],
+	pps_ac_output_power: [ENTITY_GROUP_PPS],
 	pps_temperature: [ENTITY_GROUP_PPS],
 	pps_remaining_time_hours: [ENTITY_GROUP_PPS],
 	pps_charging_status: [ENTITY_GROUP_PPS],
@@ -273,6 +274,8 @@ export const ENTITY_ID_GROUPS: Record<string, string[]> = {
 	device_timeout_minutes: [ENTITY_GROUP_PPS],
 	ac_input_limit: [ENTITY_GROUP_PPS],
 	port_memory_switch: [ENTITY_GROUP_PPS],
+	pps_max_soc: [ENTITY_GROUP_PPS],
+	pps_min_soc: [ENTITY_GROUP_PPS],
 	// energy statistics
 	energy_statistics_date: [ENTITY_GROUP_ENERGY_STATISTICS],
 	daily_solar_production: [ENTITY_GROUP_ENERGY_STATISTICS],

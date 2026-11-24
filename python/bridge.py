@@ -1307,6 +1307,34 @@ async def apply_control(
         result = await _set_min_soc(
             api, site_id, control_sn, device_id, device, int(value)
         )
+    elif control == "pps_max_soc":
+        # PPS SOC loading limits (A1783/AS220 etc.); max_soc options typically 80/85/90/95/100 %
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.soc_limits,
+            int(value),
+            "set_max_soc",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("pps_max_soc rejected (MQTT control failed)")
+    elif control == "pps_min_soc":
+        # PPS SOC loading limits (A1783/AS220 etc.); min_soc options typically 1/5/10/15/20 %
+        mqtt_ok = await _mqtt_command(
+            api,
+            device_id,
+            SolixMqttCommands.soc_limits,
+            int(value),
+            "set_min_soc",
+            ha_client=ha_client,
+        )
+        if mqtt_ok:
+            result = {"mqtt": True}
+        else:
+            raise RuntimeError("pps_min_soc rejected (MQTT control failed)")
     elif control == "grid_export_limit":
         limit = int(value)
         if limit < 100 or limit > 100000:

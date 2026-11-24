@@ -449,6 +449,10 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 
 ## Changelog
 
+### 0.10.112
+
+- **Feature (#24):** PPS **SOLIX S2000** (AS220) — MQTT map `_A1783_0421`: remaining runtime, AC output fields; sensors `pps_ac_output_power`, `pps_remaining_time_hours`; writable `pps_min_soc` / `pps_max_soc` via MQTT `soc_limits` (`python/solixapi/mqttmap.py`, `python/bridge.py`, `python/extended_entities.py`)
+
 ### 0.10.111
 
 - **Fix (#24):** MQTT `realtime_trigger` refresh — PPS **SOLIX S2000** (AS220) and similar devices receive live telemetry over MQTT without keeping the Anker mobile app connected (`python/ha_api_client.py`)

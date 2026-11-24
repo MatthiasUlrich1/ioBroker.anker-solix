@@ -189,6 +189,7 @@ const SENSOR_ENTITIES = [
   { id: "pps_battery_soc", kind: "sensor", role: "value.battery", unit: "%" },
   { id: "pps_input_power", kind: "sensor", role: "value.power", unit: "W" },
   { id: "pps_output_power", kind: "sensor", role: "value.power", unit: "W" },
+  { id: "pps_ac_output_power", kind: "sensor", role: "value.power", unit: "W" },
   { id: "pps_temperature", kind: "sensor", role: "value.temperature", unit: "\xB0C" },
   { id: "pps_remaining_time_hours", kind: "sensor", role: "value", unit: "h" },
   { id: "pps_charging_status", kind: "sensor", role: "value" },
@@ -409,7 +410,9 @@ const CONTROL_ENTITIES = [
     min: 100,
     max: 330
   },
-  { id: "port_memory_switch", kind: "switch", role: "switch" }
+  { id: "port_memory_switch", kind: "switch", role: "switch" },
+  { id: "pps_max_soc", kind: "number", role: "level", unit: "%", min: 80, max: 100 },
+  { id: "pps_min_soc", kind: "number", role: "level", unit: "%", min: 1, max: 20 }
 ];
 const PERIOD_METRIC_SUFFIXES = [
   "solar_production",
