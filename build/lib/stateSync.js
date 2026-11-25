@@ -164,8 +164,69 @@ async function syncSolarbankInfo(adapter, hierarchy, channelPath, info) {
     await adapter.setState(stateId, entry.battery_energy, true);
   }
 }
-async function syncDevices(adapter, devices) {
+async function syncDevicesFast(adapter, devices) {
+  var _a;
+  const curtailmentHost = adapter;
+  for (const device of devices) {
+    const channelPath = `${adapter.namespace}.${channelForDevice(device.info)}`;
+    const entityIds = /* @__PURE__ */ new Set([
+      ...Object.keys(device.entities),
+      ...device.writable.filter((id) => {
+        var _a2;
+        return ((_a2 = import_entities.ENTITY_MAP.get(id)) == null ? void 0 : _a2.kind) !== "sensor";
+      })
+    ]);
+    if (device.hasStatistics) {
+      for (const id of import_entities.DEVICE_STATISTICS_ENTITY_IDS) {
+        if ((0, import_entityGroups.isEntityEnabled)(id, adapter.config)) {
+          entityIds.add(id);
+        }
+      }
+    }
+    if (device.info.type === "system" || device.info.type === "site") {
+      for (const id of import_entities.LIFETIME_STATISTICS_ENTITY_IDS) {
+        if ((0, import_entityGroups.isEntityEnabled)(id, adapter.config)) {
+          entityIds.add(id);
+        }
+      }
+    }
+    for (const entityId of entityIds) {
+      if (!(0, import_entityGroups.isEntityEnabled)(entityId, adapter.config)) {
+        continue;
+      }
+      const value = device.entities[entityId];
+      if (value === null || value === void 0) {
+        continue;
+      }
+      const meta = import_entities.ENTITY_MAP.get(entityId);
+      const kind = (_a = meta == null ? void 0 : meta.kind) != null ? _a : "sensor";
+      const stateId = isSystemLifetimeStatistic(entityId, device.info.type) ? lifetimeStatisticsStatePath(channelPath, entityId) : kind === "statistics" ? statisticsStatePath(channelPath, entityId) : `${channelPath}.${kind === "sensor" ? "sensors" : "control"}.${entityId}`;
+      const stateType = resolveStateType(meta, value);
+      const stateVal = coerceStateValue(stateType, value);
+      await adapter.setState(stateId, stateVal, true);
+      if (typeof stateVal === "number") {
+        device.entities[entityId] = stateVal;
+        if (entityId === "total_pv_power" && device.info.type === "system" && curtailmentHost.onCurtailmentSystemPvUpdated) {
+          const livePvW = Math.round(stateVal);
+          if (livePvW > 0) {
+            curtailmentHost.onCurtailmentSystemPvUpdated(device.info.id, livePvW);
+          }
+        } else if ((0, import_curtailmentPower.isPvGenerationSensor)(entityId) && curtailmentHost.onCurtailmentPvUpdated) {
+          const livePvW = (0, import_curtailmentPower.readPvFromEntities)(device.entities);
+          if (livePvW > 0) {
+            curtailmentHost.onCurtailmentPvUpdated(device.info.id, livePvW);
+          }
+        }
+      }
+    }
+  }
+}
+async function syncDevices(adapter, devices, opts) {
   var _a, _b, _c, _d, _e;
+  if (opts == null ? void 0 : opts.fast) {
+    await syncDevicesFast(adapter, devices);
+    return;
+  }
   const curtailmentHost = adapter;
   const hierarchy = new import_objectHierarchy.ObjectHierarchy(adapter);
   for (const device of devices) {
@@ -286,9 +347,9 @@ async function syncDevices(adapter, devices) {
         } else if (entityId === "ev_charger_ocpp_connect_status") {
           common.states = import_entities.EV_CHARGER_OCPP_STATES;
         } else if (entityId === "ev_charger_mode") {
-          const opts = ((_d = device.ev_charger_mode_options) == null ? void 0 : _d.length) ? device.ev_charger_mode_options : Object.keys(import_entities.EV_CHARGER_MODE_ACTION_STATES);
+          const opts2 = ((_d = device.ev_charger_mode_options) == null ? void 0 : _d.length) ? device.ev_charger_mode_options : Object.keys(import_entities.EV_CHARGER_MODE_ACTION_STATES);
           const states = {};
-          for (const key of opts) {
+          for (const key of opts2) {
             if (import_entities.EV_CHARGER_MODE_ACTION_STATES[key]) {
               states[key] = import_entities.EV_CHARGER_MODE_ACTION_STATES[key];
             }
@@ -299,9 +360,9 @@ async function syncDevices(adapter, devices) {
             common.states = meta.states;
           }
         } else {
-          const opts = ((_e = device.usage_mode_options) == null ? void 0 : _e.length) ? device.usage_mode_options : Object.keys(import_entities.USAGE_MODE_STATES);
+          const opts2 = ((_e = device.usage_mode_options) == null ? void 0 : _e.length) ? device.usage_mode_options : Object.keys(import_entities.USAGE_MODE_STATES);
           const states = {};
-          for (const key of opts) {
+          for (const key of opts2) {
             if (import_entities.USAGE_MODE_STATES[key]) {
               states[key] = import_entities.USAGE_MODE_STATES[key];
             }

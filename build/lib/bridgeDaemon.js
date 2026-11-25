@@ -51,6 +51,12 @@ class BridgeDaemon {
   readyPromise;
   configured = false;
   queue = Promise.resolve();
+  deviceEventHandlers = /* @__PURE__ */ new Set();
+  /** Register a listener for daemon push events (Feature #26: MQTT device updates). */
+  onDeviceEvent(handler) {
+    this.deviceEventHandlers.add(handler);
+    return () => this.deviceEventHandlers.delete(handler);
+  }
   get isRunning() {
     return Boolean(this.proc && !this.proc.killed);
   }
@@ -119,13 +125,23 @@ class BridgeDaemon {
     (_a = this.log) == null ? void 0 : _a.info("Anker Solix bridge daemon running (persistent API/MQTT session like HA)");
   }
   onLine(line) {
-    var _a;
+    var _a, _b;
     const trimmed = line.trim();
     if (!trimmed) {
       return;
     }
     try {
       const parsed = JSON.parse(trimmed);
+      if (parsed.event === "mqtt_device_update" && parsed.device) {
+        for (const handler of this.deviceEventHandlers) {
+          try {
+            handler(parsed.device);
+          } catch (error) {
+            (_a = this.log) == null ? void 0 : _a.warn(`Device event handler failed: ${error.message}`);
+          }
+        }
+        return;
+      }
       const id = parsed.id;
       if (!id) {
         return;
@@ -141,7 +157,7 @@ class BridgeDaemon {
       }
       pending.resolve(parsed);
     } catch (error) {
-      (_a = this.log) == null ? void 0 : _a.warn(`Invalid daemon response: ${trimmed} (${error.message})`);
+      (_b = this.log) == null ? void 0 : _b.warn(`Invalid daemon response: ${trimmed} (${error.message})`);
     }
   }
   async request(action, config) {

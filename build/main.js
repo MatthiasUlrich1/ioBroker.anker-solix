@@ -53,6 +53,7 @@ class AnkerSolix extends utils.Adapter {
   pollAfterControlTimer;
   pollInFlight = false;
   modbusChannel;
+  offBridgeDeviceEvent;
   statisticsPathHintLogged = false;
   constructor(options = {}) {
     super({
@@ -403,6 +404,29 @@ class AnkerSolix extends utils.Adapter {
     for (const device of devices) {
       this.deviceEntities.set(device.info.id, device.entities);
     }
+  }
+  /**
+   * Feature #26: push a single MQTT-driven device update to ioBroker states faster than
+   * scanInterval. Only applies to devices already known from a prior full poll (so objects
+   * exist) and never races a concurrent full poll's own syncDevices/object writes.
+   */
+  handleMqttDeviceEvent(device) {
+    var _a;
+    if ((0, import_config.isModbusOnly)(this.config)) {
+      return;
+    }
+    const deviceId = (_a = device.info) == null ? void 0 : _a.id;
+    if (!deviceId || !this.deviceContexts.has(deviceId)) {
+      return;
+    }
+    if (this.pollInFlight) {
+      return;
+    }
+    this.rememberDeviceContexts([device]);
+    this.rememberDeviceEntities([device]);
+    void (0, import_stateSync.syncDevices)(this, [device], { fast: true }).catch(
+      (err) => this.log.debug(`MQTT push state sync failed for ${deviceId}: ${err.message}`)
+    );
   }
   getCurtailmentConfig() {
     const modeAfter = this.config.curtailmentModeAfter === "smart" ? "smart" : "smartmeter";
@@ -793,6 +817,11 @@ class AnkerSolix extends utils.Adapter {
     this.logAuthCacheStatus();
     await this.ensurePeriodScheduleOffset();
     await (0, import_pythonBridge.ensureBridgeDaemon)(this.getBridgeConfig(), this.config.pythonPath || "", this.log);
+    this.offBridgeDeviceEvent = (0, import_pythonBridge.onBridgeDeviceEvent)(
+      this.config.pythonPath || "",
+      this.log,
+      (device) => this.handleMqttDeviceEvent(device)
+    );
     this.subscribeStates(`${this.namespace}.*.control.*`);
     this.subscribeStates(`${this.namespace}.services.*`);
     this.subscribeCurtailmentPvStates();
@@ -823,7 +852,7 @@ class AnkerSolix extends utils.Adapter {
     await this.modbusChannel.start();
   }
   onUnload(callback) {
-    var _a;
+    var _a, _b;
     if (this.pollTimer) {
       this.clearInterval(this.pollTimer);
       this.pollTimer = void 0;
@@ -835,7 +864,9 @@ class AnkerSolix extends utils.Adapter {
     this.lastNotifiedPvW.clear();
     this.onCurtailmentPvUpdated = void 0;
     this.onCurtailmentSystemPvUpdated = void 0;
-    (_a = this.modbusChannel) == null ? void 0 : _a.stop();
+    (_a = this.offBridgeDeviceEvent) == null ? void 0 : _a.call(this);
+    this.offBridgeDeviceEvent = void 0;
+    (_b = this.modbusChannel) == null ? void 0 : _b.stop();
     this.modbusChannel = void 0;
     void (0, import_pythonBridge.stopBridgeDaemon)().finally(() => callback());
   }

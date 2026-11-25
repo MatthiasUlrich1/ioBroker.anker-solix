@@ -3,7 +3,7 @@ import * as readline from "node:readline";
 import * as fs from "node:fs";
 
 import { buildPythonEnv, pythonSpawnArgs, resolvePythonSpawn } from "./pythonPaths";
-import type { BridgeConfig, BridgePollResult, BridgeServiceConfig, BridgeSetConfig } from "./types";
+import type { BridgeConfig, BridgeDevice, BridgePollResult, BridgeServiceConfig, BridgeSetConfig } from "./types";
 
 function bridgeScriptPath(): string {
 	return `${__dirname}/../../python/bridge.py`;
@@ -17,7 +17,13 @@ interface DaemonResponse extends BridgePollResult {
 	id?: string;
 	ready?: boolean;
 	persistent?: boolean;
+	/** Push event (no id), e.g. {"event":"mqtt_device_update","device":{...}} — see Feature #26. */
+	event?: string;
+	device?: BridgeDevice;
 }
+
+/** Handler for daemon push events (MQTT device updates faster than scanInterval). */
+export type BridgeDeviceEventHandler = (device: BridgeDevice) => void;
 
 export class BridgeDaemon {
 	private proc: ChildProcess | undefined;
@@ -29,6 +35,13 @@ export class BridgeDaemon {
 	private readyPromise: Promise<void> | undefined;
 	private configured = false;
 	private queue: Promise<void> = Promise.resolve();
+	private readonly deviceEventHandlers = new Set<BridgeDeviceEventHandler>();
+
+	/** Register a listener for daemon push events (Feature #26: MQTT device updates). */
+	onDeviceEvent(handler: BridgeDeviceEventHandler): () => void {
+		this.deviceEventHandlers.add(handler);
+		return () => this.deviceEventHandlers.delete(handler);
+	}
 
 	constructor(
 		private readonly pythonPath: string,
@@ -117,6 +130,16 @@ export class BridgeDaemon {
 		}
 		try {
 			const parsed = JSON.parse(trimmed) as DaemonResponse;
+			if (parsed.event === "mqtt_device_update" && parsed.device) {
+				for (const handler of this.deviceEventHandlers) {
+					try {
+						handler(parsed.device);
+					} catch (error) {
+						this.log?.warn(`Device event handler failed: ${(error as Error).message}`);
+					}
+				}
+				return;
+			}
 			const id = parsed.id;
 			if (!id) {
 				return;

@@ -1,9 +1,22 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.112",
+		"version": "0.10.113",
 		"messagebox": true,
 		"news": {
+			"0.10.113": {
+				"en": "GitHub interim: push MQTT telemetry into states between polls (~1.5s) for faster automations (#26) — not npm yet",
+				"de": "GitHub-Zwischenstand: MQTT-Telemetrie zwischen Polls in States (~1.5s) für schnellere Automationen (#26) — noch nicht auf npm",
+				"ru": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"pt": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"nl": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"fr": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"it": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"es": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"pl": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"uk": "GitHub interim: MQTT telemetry to states between polls (#26)",
+				"zh-cn": "GitHub interim: MQTT telemetry to states between polls (#26)"
+			},
 			"0.10.112": {
 				"en": "AS220/PPS: remaining time, AC output power, writable SOC charge limits (#24)",
 				"de": "AS220/PPS: Restlaufzeit, AC-Ausgangsleistung, schreibbare SOC-Ladegrenzen (#24)",
@@ -81,19 +94,6 @@
 				"pl": "npm overrides: wymuś node-gyp ^10.2.0 (Python 3.12+ / bez distutils; kompatybilność instalacji Node 24)",
 				"uk": "npm overrides: примусово node-gyp ^10.2.0 (Python 3.12+ / без distutils; сумісність встановлення Node 24)",
 				"zh-cn": "npm overrides：强制 node-gyp ^10.2.0（Python 3.12+ / 无需 distutils；兼容 Node 24 安装）"
-			},
-			"0.10.106": {
-				"en": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot automerge without pull_request_target",
-				"de": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot-Automerge ohne pull_request_target",
-				"ru": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot automerge без pull_request_target",
-				"pt": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot sem pull_request_target",
-				"nl": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; Dependabot-automerge zonder pull_request_target",
-				"fr": "Solarbank 3 (A17C5) : charge_upper_limit / discharge_lower_limit ; @iobroker/testing 6.x ; automerge Dependabot sans pull_request_target",
-				"it": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot senza pull_request_target",
-				"es": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge de Dependabot sin pull_request_target",
-				"pl": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot bez pull_request_target",
-				"uk": "Solarbank 3 (A17C5): charge_upper_limit / discharge_lower_limit; @iobroker/testing 6.x; automerge Dependabot без pull_request_target",
-				"zh-cn": "Solarbank 3 (A17C5)：charge_upper_limit / discharge_lower_limit；@iobroker/testing 6.x；Dependabot 自动合并改用 pull_request"
 			}
 		},
 		"titleLang": {

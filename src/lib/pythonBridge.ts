@@ -3,12 +3,26 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { getBridgeDaemon, stopBridgeDaemon } from "./bridgeDaemon";
+import { type BridgeDeviceEventHandler, getBridgeDaemon, stopBridgeDaemon } from "./bridgeDaemon";
 
 export { stopBridgeDaemon };
 import { adapterDelay } from "./adapterTimers";
 import { buildPythonEnv, pythonSpawnArgs, resolvePythonSpawn } from "./pythonPaths";
 import type { BridgeConfig, BridgePollResult, BridgeServiceConfig, BridgeSetConfig } from "./types";
+
+/**
+ * Register a listener for MQTT device-update push events from the bridge daemon
+ * (Feature #26: faster than scanInterval). Returns an unsubscribe function.
+ * No-op (returns a no-op unsubscribe) when the daemon is not running.
+ */
+export function onBridgeDeviceEvent(
+	pythonPath: string,
+	log: ioBroker.Logger | undefined,
+	handler: BridgeDeviceEventHandler,
+): () => void {
+	const daemon = getBridgeDaemon(pythonPath, log);
+	return daemon.onDeviceEvent(handler);
+}
 
 type BridgeRunConfig = BridgeConfig | BridgeSetConfig | BridgeServiceConfig;
 

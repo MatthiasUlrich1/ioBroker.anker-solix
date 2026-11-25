@@ -1518,122 +1518,182 @@ def _enrich_cache_entry(
     return ctx_data
 
 
+def _enable_stats_from_config(config: dict) -> bool:
+    """Whether any energy-statistics entity group is enabled in adapter config."""
+    enabled = enabled_entity_groups(config)
+    return (
+        GROUP_ENERGY_STATISTICS in enabled
+        or GROUP_ENERGY_DETAIL in enabled
+        or GROUP_ENERGY_STATISTICS_WEEK in enabled
+        or GROUP_ENERGY_STATISTICS_MONTH in enabled
+        or GROUP_ENERGY_STATISTICS_YEAR in enabled
+    )
+
+
+def _build_device_entry(
+    client: IoBrokerAnkerApiClient,
+    config: dict,
+    ctx_id: str,
+    ctx_data: dict,
+    *,
+    site_has_combiner: dict[str, bool],
+    combiner_device_present: dict[str, bool],
+    enable_stats: bool,
+) -> dict | None:
+    """Build one BridgeDevice entry from a single cache entry.
+
+    Shared by the full poll loop (_devices_from_caches) and the single-device
+    MQTT push path (build_mqtt_device_event). Returns None when the device
+    should be skipped (excluded, or no entities/writable/solarbank_info).
+    """
+    if not isinstance(ctx_data, dict):
+        return None
+    info = device_info(str(ctx_id), ctx_data)
+    if not should_include_device(str(ctx_id), ctx_data, info, config):
+        return None
+    site_id = str(info.get("site_id") or "")
+    if info["type"] in ("site", "system") and not site_id:
+        site_id = str(ctx_id)
+    combiner_site = site_has_combiner.get(site_id, False)
+    combiner_present = combiner_device_present.get(site_id, False)
+    ctx_data = _enrich_cache_entry(
+        client,
+        str(ctx_id),
+        ctx_data,
+        info,
+        site_has_combiner=combiner_site,
+        combiner_device_present=combiner_present,
+        enable_stats=enable_stats,
+    )
+    if info["type"] == "combiner_box":
+        ctx_data = enrich_combiner_soc(client.api, str(ctx_id), ctx_data)
+        ctx_data = enrich_combiner_station_fields(client.api, str(ctx_id), ctx_data)
+    elif info["type"] == "solarbank":
+        from battery_power_pick import enrich_solarbank_scene  # noqa: PLC0415
+
+        ctx_data = enrich_solarbank_scene(client.api, str(ctx_id), ctx_data)
+
+        # Station SOC limits are returned by detail polls. Reuse the
+        # device/site cache when they are absent from the current poll.
+        site_id_soc = str(info.get("site_id") or "")
+        api_dev = client.api.devices.get(str(ctx_id)) or {}
+        api_site = client.api.sites.get(site_id_soc) or {}
+        station_settings = (
+            (api_site.get("site_details") or {}).get("station_settings") or {}
+        )
+
+        for soc_key in (
+            "charge_upper_limit",
+            "discharge_lower_limit",
+        ):
+            if ctx_data.get(soc_key) in (None, ""):
+                soc_value = api_dev.get(soc_key)
+                if soc_value in (None, ""):
+                    soc_value = station_settings.get(soc_key)
+                if soc_value not in (None, ""):
+                    ctx_data = {**ctx_data, soc_key: soc_value}
+
+    entities = extract_entities(ctx_data, config)
+    writable = writable_controls_for_device(ctx_data, info["type"], config)
+    solarbank_info = None
+    if info["type"] in ("system", "site"):
+        from solarbank_info import extract_solarbank_info  # noqa: PLC0415
+
+        solarbank_info = extract_solarbank_info(
+            {**ctx_data, "site_id": site_id}, client.api, config
+        )
+    if not entities and not writable and not solarbank_info:
+        return None
+    usage_opts = sorted(
+        client.api.solarbank_usage_mode_options(deviceSn=str(ctx_id))
+    )
+    ev_mode_opts: list[str] = []
+    if str(info.get("type") or "") == "ev_charger":
+        from ev_charger_mode import (  # noqa: PLC0415
+            ev_charger_action_options,
+            is_ev_charger_action_mode,
+        )
+
+        mdev = (
+            client.get_mqtt_device(str(ctx_id))
+            if client._mqtt_usage
+            else None
+        )
+        if mdev and hasattr(mdev, "ev_charger_mode_options"):
+            ev_mode_opts = sorted(
+                m for m in mdev.ev_charger_mode_options() if is_ev_charger_action_mode(m)
+            )
+        else:
+            ev_mode_opts = ev_charger_action_options(ctx_data)
+    max_ac_opts = max_total_ac_output_options(
+        ctx_data, str(info.get("type") or ""), client.api, str(ctx_id)
+    )
+    has_statistics = device_exposes_energy_statistics(
+        str(info.get("type") or ""),
+        combiner_site,
+        enable_stats=enable_stats,
+        combiner_device_present=combiner_present,
+    )
+    return {
+        "info": info,
+        "entities": _json_safe(entities),
+        "writable": writable,
+        "usage_mode_options": usage_opts,
+        "ev_charger_mode_options": ev_mode_opts,
+        "max_total_ac_output_options": max_ac_opts,
+        "hasStatistics": has_statistics,
+        "solarbankInfo": solarbank_info,
+    }
+
+
 def _devices_from_caches(
     client: IoBrokerAnkerApiClient, config: dict, caches: dict
 ) -> list[dict]:
     devices: list[dict] = []
     site_has_combiner = build_site_has_combiner(caches)
     combiner_device_present = build_site_combiner_device_present(caches)
-    _enabled = enabled_entity_groups(config)
-    enable_stats = (
-        GROUP_ENERGY_STATISTICS in _enabled
-        or GROUP_ENERGY_DETAIL in _enabled
-        or GROUP_ENERGY_STATISTICS_WEEK in _enabled
-        or GROUP_ENERGY_STATISTICS_MONTH in _enabled
-        or GROUP_ENERGY_STATISTICS_YEAR in _enabled
-    )
+    enable_stats = _enable_stats_from_config(config)
     for ctx_id, ctx_data in caches.items():
-        if not isinstance(ctx_data, dict):
-            continue
-        info = device_info(str(ctx_id), ctx_data)
-        if not should_include_device(str(ctx_id), ctx_data, info, config):
-            continue
-        site_id = str(info.get("site_id") or "")
-        if info["type"] in ("site", "system") and not site_id:
-            site_id = str(ctx_id)
-        combiner_site = site_has_combiner.get(site_id, False)
-        combiner_present = combiner_device_present.get(site_id, False)
-        ctx_data = _enrich_cache_entry(
+        entry = _build_device_entry(
             client,
+            config,
             str(ctx_id),
             ctx_data,
-            info,
-            site_has_combiner=combiner_site,
-            combiner_device_present=combiner_present,
+            site_has_combiner=site_has_combiner,
+            combiner_device_present=combiner_device_present,
             enable_stats=enable_stats,
         )
-        if info["type"] == "combiner_box":
-            ctx_data = enrich_combiner_soc(client.api, str(ctx_id), ctx_data)
-            ctx_data = enrich_combiner_station_fields(client.api, str(ctx_id), ctx_data)
-        elif info["type"] == "solarbank":
-            from battery_power_pick import enrich_solarbank_scene  # noqa: PLC0415
-
-            ctx_data = enrich_solarbank_scene(client.api, str(ctx_id), ctx_data)
-
-            # Station SOC limits are returned by detail polls. Reuse the
-            # device/site cache when they are absent from the current poll.
-            site_id_soc = str(info.get("site_id") or "")
-            api_dev = client.api.devices.get(str(ctx_id)) or {}
-            api_site = client.api.sites.get(site_id_soc) or {}
-            station_settings = (
-                (api_site.get("site_details") or {}).get("station_settings") or {}
-            )
-
-            for soc_key in (
-                "charge_upper_limit",
-                "discharge_lower_limit",
-            ):
-                if ctx_data.get(soc_key) in (None, ""):
-                    soc_value = api_dev.get(soc_key)
-                    if soc_value in (None, ""):
-                        soc_value = station_settings.get(soc_key)
-                    if soc_value not in (None, ""):
-                        ctx_data = {**ctx_data, soc_key: soc_value}
-
-        entities = extract_entities(ctx_data, config)
-        writable = writable_controls_for_device(ctx_data, info["type"], config)
-        solarbank_info = None
-        if info["type"] in ("system", "site"):
-            from solarbank_info import extract_solarbank_info  # noqa: PLC0415
-
-            solarbank_info = extract_solarbank_info(
-                {**ctx_data, "site_id": site_id}, client.api, config
-            )
-        if not entities and not writable and not solarbank_info:
-            continue
-        usage_opts = sorted(
-            client.api.solarbank_usage_mode_options(deviceSn=str(ctx_id))
-        )
-        ev_mode_opts: list[str] = []
-        if str(info.get("type") or "") == "ev_charger":
-            from ev_charger_mode import (  # noqa: PLC0415
-                ev_charger_action_options,
-                is_ev_charger_action_mode,
-            )
-
-            mdev = (
-                client.get_mqtt_device(str(ctx_id))
-                if client._mqtt_usage
-                else None
-            )
-            if mdev and hasattr(mdev, "ev_charger_mode_options"):
-                ev_mode_opts = sorted(
-                    m for m in mdev.ev_charger_mode_options() if is_ev_charger_action_mode(m)
-                )
-            else:
-                ev_mode_opts = ev_charger_action_options(ctx_data)
-        max_ac_opts = max_total_ac_output_options(
-            ctx_data, str(info.get("type") or ""), client.api, str(ctx_id)
-        )
-        has_statistics = device_exposes_energy_statistics(
-            str(info.get("type") or ""),
-            combiner_site,
-            enable_stats=enable_stats,
-            combiner_device_present=combiner_present,
-        )
-        devices.append(
-            {
-                "info": info,
-                "entities": _json_safe(entities),
-                "writable": writable,
-                "usage_mode_options": usage_opts,
-                "ev_charger_mode_options": ev_mode_opts,
-                "max_total_ac_output_options": max_ac_opts,
-                "hasStatistics": has_statistics,
-                "solarbankInfo": solarbank_info,
-            }
-        )
+        if entry is not None:
+            devices.append(entry)
     return devices
+
+
+def build_mqtt_device_event(
+    client: IoBrokerAnkerApiClient, config: dict, device_sn: str
+) -> dict | None:
+    """Build a single BridgeDevice entry for an MQTT-pushed device update.
+
+    Looks up the current API caches (already updated by update_device_mqtt)
+    and reuses the same per-device build logic as the full poll, so the
+    stdout event has the identical shape as a poll's "devices" entries.
+    Returns None when the device is unknown or should be skipped.
+    """
+    caches = client.api.getCaches()
+    ctx_data = caches.get(device_sn)
+    if not isinstance(ctx_data, dict):
+        return None
+    site_has_combiner = build_site_has_combiner(caches)
+    combiner_device_present = build_site_combiner_device_present(caches)
+    enable_stats = _enable_stats_from_config(config)
+    return _build_device_entry(
+        client,
+        config,
+        device_sn,
+        ctx_data,
+        site_has_combiner=site_has_combiner,
+        combiner_device_present=combiner_device_present,
+        enable_stats=enable_stats,
+    )
 
 
 async def run_poll_with_client(

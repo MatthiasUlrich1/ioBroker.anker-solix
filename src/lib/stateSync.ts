@@ -185,7 +185,85 @@ async function syncSolarbankInfo(
 	}
 }
 
-export async function syncDevices(adapter: ioBroker.Adapter, devices: BridgeDevice[]): Promise<void> {
+/**
+ * Fast path for MQTT push events (Feature #26): only `setState` for entities that already
+ * carry a value, no hierarchy/object creation or pruning. The caller (main.ts) guards that
+ * the device/objects already exist from a prior full poll before using this mode.
+ */
+async function syncDevicesFast(adapter: ioBroker.Adapter, devices: BridgeDevice[]): Promise<void> {
+	const curtailmentHost = adapter as CurtailmentPvSyncHost;
+	for (const device of devices) {
+		const channelPath = `${adapter.namespace}.${channelForDevice(device.info)}`;
+
+		const entityIds = new Set([
+			...Object.keys(device.entities),
+			...device.writable.filter(id => ENTITY_MAP.get(id)?.kind !== "sensor"),
+		]);
+		if (device.hasStatistics) {
+			for (const id of DEVICE_STATISTICS_ENTITY_IDS) {
+				if (isEntityEnabled(id, adapter.config)) {
+					entityIds.add(id);
+				}
+			}
+		}
+		if (device.info.type === "system" || device.info.type === "site") {
+			for (const id of LIFETIME_STATISTICS_ENTITY_IDS) {
+				if (isEntityEnabled(id, adapter.config)) {
+					entityIds.add(id);
+				}
+			}
+		}
+
+		for (const entityId of entityIds) {
+			if (!isEntityEnabled(entityId, adapter.config)) {
+				continue;
+			}
+			const value = device.entities[entityId];
+			if (value === null || value === undefined) {
+				continue; // fast mode only pushes entities that already carry a value
+			}
+			const meta = ENTITY_MAP.get(entityId);
+			const kind = meta?.kind ?? "sensor";
+			const stateId = isSystemLifetimeStatistic(entityId, device.info.type)
+				? lifetimeStatisticsStatePath(channelPath, entityId)
+				: kind === "statistics"
+					? statisticsStatePath(channelPath, entityId)
+					: `${channelPath}.${kind === "sensor" ? "sensors" : "control"}.${entityId}`;
+
+			const stateType = resolveStateType(meta, value);
+			const stateVal = coerceStateValue(stateType, value);
+			await adapter.setState(stateId, stateVal, true);
+			if (typeof stateVal === "number") {
+				device.entities[entityId] = stateVal;
+				if (
+					entityId === "total_pv_power" &&
+					device.info.type === "system" &&
+					curtailmentHost.onCurtailmentSystemPvUpdated
+				) {
+					const livePvW = Math.round(stateVal);
+					if (livePvW > 0) {
+						curtailmentHost.onCurtailmentSystemPvUpdated(device.info.id, livePvW);
+					}
+				} else if (isPvGenerationSensor(entityId) && curtailmentHost.onCurtailmentPvUpdated) {
+					const livePvW = readPvFromEntities(device.entities);
+					if (livePvW > 0) {
+						curtailmentHost.onCurtailmentPvUpdated(device.info.id, livePvW);
+					}
+				}
+			}
+		}
+	}
+}
+
+export async function syncDevices(
+	adapter: ioBroker.Adapter,
+	devices: BridgeDevice[],
+	opts?: { fast?: boolean },
+): Promise<void> {
+	if (opts?.fast) {
+		await syncDevicesFast(adapter, devices);
+		return;
+	}
 	const curtailmentHost = adapter as CurtailmentPvSyncHost;
 	const hierarchy = new ObjectHierarchy(adapter);
 	for (const device of devices) {

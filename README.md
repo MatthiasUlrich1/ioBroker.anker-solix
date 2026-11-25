@@ -449,6 +449,10 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 
 ## Changelog
 
+### 0.10.113 (GitHub interim — not on npm yet)
+
+- **Feature (#26):** Push MQTT telemetry into ioBroker states between polls (~1.5s debounce) so PPS/live sensors update faster than `scanInterval` (still min 30s for cloud HTTP). Test via GitHub install before npm.
+
 ### 0.10.112
 
 - **Feature (#24):** PPS **SOLIX S2000** (AS220) — MQTT map `_A1783_0421`: remaining runtime, AC output fields; sensors `pps_ac_output_power`, `pps_remaining_time_hours`; writable `pps_min_soc` / `pps_max_soc` via MQTT `soc_limits` (`python/solixapi/mqttmap.py`, `python/bridge.py`, `python/extended_entities.py`)

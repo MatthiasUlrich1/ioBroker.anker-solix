@@ -35,7 +35,7 @@ import {
 } from "./lib/curtailmentRunner";
 import { setupCurtailmentStates } from "./lib/curtailmentStates";
 import { runPythonInstaller } from "./lib/ensurePython";
-import { ensureBridgeDaemon, runBridge, stopBridgeDaemon } from "./lib/pythonBridge";
+import { ensureBridgeDaemon, onBridgeDeviceEvent, runBridge, stopBridgeDaemon } from "./lib/pythonBridge";
 import { SERVICE_STATES, setupServiceStates } from "./lib/services";
 import { resolveCurtailmentDevices } from "./lib/curtailmentConfig";
 import {
@@ -63,6 +63,7 @@ class AnkerSolix extends utils.Adapter {
 	private pollAfterControlTimer: AdapterTimer | undefined;
 	private pollInFlight = false;
 	private modbusChannel: ModbusChannel | undefined;
+	private offBridgeDeviceEvent: (() => void) | undefined;
 	private statisticsPathHintLogged = false;
 
 	public constructor(options: Partial<utils.AdapterOptions> = {}) {
@@ -476,6 +477,29 @@ class AnkerSolix extends utils.Adapter {
 		for (const device of devices) {
 			this.deviceEntities.set(device.info.id, device.entities);
 		}
+	}
+
+	/**
+	 * Feature #26: push a single MQTT-driven device update to ioBroker states faster than
+	 * scanInterval. Only applies to devices already known from a prior full poll (so objects
+	 * exist) and never races a concurrent full poll's own syncDevices/object writes.
+	 */
+	private handleMqttDeviceEvent(device: BridgeDevice): void {
+		if (isModbusOnly(this.config)) {
+			return;
+		}
+		const deviceId = device.info?.id;
+		if (!deviceId || !this.deviceContexts.has(deviceId)) {
+			return; // unknown device — let the next full poll create objects/context first
+		}
+		if (this.pollInFlight) {
+			return; // avoid racing a concurrent full poll
+		}
+		this.rememberDeviceContexts([device]);
+		this.rememberDeviceEntities([device]);
+		void syncDevices(this, [device], { fast: true }).catch(err =>
+			this.log.debug(`MQTT push state sync failed for ${deviceId}: ${(err as Error).message}`),
+		);
 	}
 
 	private getCurtailmentConfig(): CurtailmentRunnerConfig {
@@ -918,6 +942,9 @@ class AnkerSolix extends utils.Adapter {
 		await this.ensurePeriodScheduleOffset();
 
 		await ensureBridgeDaemon(this.getBridgeConfig(), this.config.pythonPath || "", this.log);
+		this.offBridgeDeviceEvent = onBridgeDeviceEvent(this.config.pythonPath || "", this.log, device =>
+			this.handleMqttDeviceEvent(device),
+		);
 
 		this.subscribeStates(`${this.namespace}.*.control.*`);
 		this.subscribeStates(`${this.namespace}.services.*`);
@@ -964,6 +991,8 @@ class AnkerSolix extends utils.Adapter {
 		this.lastNotifiedPvW.clear();
 		(this as CurtailmentPvSyncHost).onCurtailmentPvUpdated = undefined;
 		(this as CurtailmentPvSyncHost).onCurtailmentSystemPvUpdated = undefined;
+		this.offBridgeDeviceEvent?.();
+		this.offBridgeDeviceEvent = undefined;
 		this.modbusChannel?.stop();
 		this.modbusChannel = undefined;
 		void stopBridgeDaemon().finally(() => callback());

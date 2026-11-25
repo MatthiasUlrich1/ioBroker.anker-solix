@@ -29,6 +29,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var pythonBridge_exports = {};
 __export(pythonBridge_exports, {
   ensureBridgeDaemon: () => ensureBridgeDaemon,
+  onBridgeDeviceEvent: () => onBridgeDeviceEvent,
   runBridge: () => runBridge,
   stopBridgeDaemon: () => import_bridgeDaemon.stopBridgeDaemon
 });
@@ -40,6 +41,10 @@ var path = __toESM(require("node:path"));
 var import_bridgeDaemon = require("./bridgeDaemon");
 var import_adapterTimers = require("./adapterTimers");
 var import_pythonPaths = require("./pythonPaths");
+function onBridgeDeviceEvent(pythonPath, log, handler) {
+  const daemon = (0, import_bridgeDaemon.getBridgeDaemon)(pythonPath, log);
+  return daemon.onDeviceEvent(handler);
+}
 function bridgeScriptPath() {
   return path.join(__dirname, "..", "..", "python", "bridge.py");
 }
@@ -172,6 +177,7 @@ async function runBridge(action, config, pythonPath, log, options) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   ensureBridgeDaemon,
+  onBridgeDeviceEvent,
   runBridge,
   stopBridgeDaemon
 });
