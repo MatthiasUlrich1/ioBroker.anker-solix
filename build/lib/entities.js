@@ -408,7 +408,7 @@ const CONTROL_ENTITIES = [
     role: "level.power",
     unit: "W",
     min: 100,
-    max: 330
+    max: 2400
   },
   { id: "port_memory_switch", kind: "switch", role: "switch" },
   { id: "pps_max_soc", kind: "number", role: "level", unit: "%", min: 80, max: 100 },

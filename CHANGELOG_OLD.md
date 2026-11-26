@@ -183,6 +183,16 @@ See git history / GitHub releases for 0.9.x notes (login cache, entity groups, c
 - **en:** Admin tile: remove GitHub install symlink, normalize display name (Anker Solix)
 - **de:** Admin-Kachel: GitHub-Symlink entfernt, einheitlicher Anzeigename (Anker Solix)
 
+### 0.10.113
+- Pruned from common.news when adding 0.10.114 GitHub interim (#24).
+- **en:** GitHub interim: push MQTT telemetry into states between polls (~1.5s) for faster automations (#26) — not npm yet
+- **de:** GitHub-Zwischenstand: MQTT-Telemetrie zwischen Polls in States (~1.5s) für schnellere Automationen (#26) — noch nicht auf npm
+
+### 0.10.107
+- Pruned from common.news when adding 0.10.114 GitHub interim (#24).
+- **en:** npm overrides: force node-gyp ^10.2.0 (Python 3.12+ / no distutils; Node 24 install compatibility)
+- **de:** npm overrides: node-gyp ^10.2.0 erzwingen (Python 3.12+ / kein distutils; Install-Kompatibilität Node 24)
+
 ### 0.10.106
 - Pruned from common.news when adding 0.10.113 GitHub interim (#26).
 

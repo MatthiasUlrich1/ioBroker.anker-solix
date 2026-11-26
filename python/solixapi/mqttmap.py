@@ -4705,10 +4705,11 @@ SOLIXMQTTMAP: Final[dict] = {
             SolixMqttCommands.ac_charge_limit: CMD_COMMON_V2
             | {
                 "a4": {
-                    NAME: "set_ac_input_limit",  # in W; min: 200, max: 1800-2400, step: 100
+                    NAME: "set_ac_input_limit",  # in W; min: 100, max: 1800-2400, step: 100
                     TYPE: DeviceHexDataTypes.sile.value,
                     STATE_NAME: "ac_input_limit",
-                    VALUE_MIN: 200,
+                    # Note: App/previous map had 200 W; S2000 MQTT/telemetry supports 100 W (Issue #24)
+                    VALUE_MIN: 100,
                     VALUE_MAX: 1800,  # lowest limit for all variants
                     VALUE_MAX_STATE: "ac_input_limit_max",  # adopt limit based on device variant
                     VALUE_STEP: 100,

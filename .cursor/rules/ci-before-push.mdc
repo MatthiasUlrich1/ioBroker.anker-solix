@@ -25,3 +25,9 @@ Pure GitHub interim bumps without npm: do **not** add unpublished versions to `c
 After editing TypeScript under `src/`, run `npm run build` and commit updated `build/` if the repo tracks compiled output.
 
 Do not push if `verify:ci` fails. Enable the local pre-push hook once after clone: `npm run setup:githooks` (do not use a `prepare` script — E0094).
+
+## GitHub Actions red on main ≠ code break
+
+If `check-and-lint` + ubuntu + windows are green but `adapter-tests (*, macos-latest)` show **cancelled** with **empty steps** / no `runner_name`, that is **macOS arm64 runner capacity** (GitHub annotation: longer queue times) — not an adapter regression. `deploy` stays skipped on non-`v*` pushes (correct).
+
+Remediation: `gh run rerun <id> --failed` (retry capacity). Do not bump version or revert MQTT/code for this pattern. Optional workflow harden later: `strategy.fail-fast: false` and/or fewer macos matrix cells.

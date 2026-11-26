@@ -1286,7 +1286,7 @@ EXTENDED_CONTROL_ENTITIES: list[dict[str, Any]] = [
         "control": "ac_input_limit",
         "kind": "number",
         "min": 100,
-        "max": 330,
+        "max": 2400,
         "groups": [GROUP_PPS],
     },
     {

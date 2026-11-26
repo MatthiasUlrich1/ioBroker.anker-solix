@@ -1,21 +1,21 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.113",
+		"version": "0.10.114",
 		"messagebox": true,
 		"news": {
-			"0.10.113": {
-				"en": "GitHub interim: push MQTT telemetry into states between polls (~1.5s) for faster automations (#26) — not npm yet",
-				"de": "GitHub-Zwischenstand: MQTT-Telemetrie zwischen Polls in States (~1.5s) für schnellere Automationen (#26) — noch nicht auf npm",
-				"ru": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"pt": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"nl": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"fr": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"it": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"es": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"pl": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"uk": "GitHub interim: MQTT telemetry to states between polls (#26)",
-				"zh-cn": "GitHub interim: MQTT telemetry to states between polls (#26)"
+			"0.10.114": {
+				"en": "GitHub interim: AS220 S2000 AC input/charge limit writable from 100 W (#24) — not npm yet",
+				"de": "GitHub-Zwischenstand: AS220 S2000 AC-Eingangs-/Ladelimit ab 100 W schreibbar (#24) — noch nicht auf npm",
+				"ru": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"pt": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"nl": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"fr": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"it": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"es": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"pl": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"uk": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
+				"zh-cn": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)"
 			},
 			"0.10.112": {
 				"en": "AS220/PPS: remaining time, AC output power, writable SOC charge limits (#24)",
@@ -81,19 +81,6 @@
 				"pl": "Solarbank 3: SOC/SOH/temp. ekspansji oraz moc PV na wejście (pv_1…4) z nazwami (#20)",
 				"uk": "Solarbank 3: SOC/SOH/темп. розширень і потужність PV на вхід (pv_1…4) з іменами (#20)",
 				"zh-cn": "Solarbank 3：扩展电池 SOC/SOH/温度及各路 PV 功率（pv_1…4）含名称（#20）"
-			},
-			"0.10.107": {
-				"en": "npm overrides: force node-gyp ^10.2.0 (Python 3.12+ / no distutils; Node 24 install compatibility)",
-				"de": "npm overrides: node-gyp ^10.2.0 erzwingen (Python 3.12+ / kein distutils; Install-Kompatibilität Node 24)",
-				"ru": "npm overrides: принудительно node-gyp ^10.2.0 (Python 3.12+ / без distutils; совместимость установки Node 24)",
-				"pt": "npm overrides: forçar node-gyp ^10.2.0 (Python 3.12+ / sem distutils; compatibilidade de instalação Node 24)",
-				"nl": "npm overrides: forceer node-gyp ^10.2.0 (Python 3.12+ / geen distutils; Node 24-installatiecompatibiliteit)",
-				"fr": "npm overrides : forcer node-gyp ^10.2.0 (Python 3.12+ / sans distutils ; compatibilité d'installation Node 24)",
-				"it": "npm overrides: forza node-gyp ^10.2.0 (Python 3.12+ / senza distutils; compatibilità installazione Node 24)",
-				"es": "npm overrides: forzar node-gyp ^10.2.0 (Python 3.12+ / sin distutils; compatibilidad de instalación Node 24)",
-				"pl": "npm overrides: wymuś node-gyp ^10.2.0 (Python 3.12+ / bez distutils; kompatybilność instalacji Node 24)",
-				"uk": "npm overrides: примусово node-gyp ^10.2.0 (Python 3.12+ / без distutils; сумісність встановлення Node 24)",
-				"zh-cn": "npm overrides：强制 node-gyp ^10.2.0（Python 3.12+ / 无需 distutils；兼容 Node 24 安装）"
 			}
 		},
 		"titleLang": {
