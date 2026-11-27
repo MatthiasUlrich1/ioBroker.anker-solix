@@ -449,13 +449,14 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 
 ## Changelog
 
-### 0.10.114 (GitHub interim — not on npm yet)
+### 0.10.114
 
 - **Fix (#24):** AS220 **SOLIX S2000** — MQTT `ac_charge_limit` / `ac_input_limit` minimum **100 W** (was 200 W); entity metadata max **2400 W** (device variant still clamps via `ac_input_limit_max`)
+- Includes **0.10.113** (never published separately): MQTT push telemetry between polls (#26)
 
-### 0.10.113 (GitHub interim — not on npm yet)
+### 0.10.113
 
-- **Feature (#26):** Push MQTT telemetry into ioBroker states between polls (~1.5s debounce) so PPS/live sensors update faster than `scanInterval` (still min 30s for cloud HTTP). Test via GitHub install before npm.
+- **Feature (#26):** Push MQTT telemetry into ioBroker states between polls (~1.5s debounce) so PPS/live sensors update faster than `scanInterval` (still min 30s for cloud HTTP). Shipped in npm **0.10.114**.
 
 ### 0.10.112
 

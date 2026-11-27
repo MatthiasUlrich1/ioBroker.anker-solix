@@ -5,17 +5,17 @@
 		"messagebox": true,
 		"news": {
 			"0.10.114": {
-				"en": "GitHub interim: AS220 S2000 AC input/charge limit writable from 100 W (#24) — not npm yet",
-				"de": "GitHub-Zwischenstand: AS220 S2000 AC-Eingangs-/Ladelimit ab 100 W schreibbar (#24) — noch nicht auf npm",
-				"ru": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"pt": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"nl": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"fr": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"it": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"es": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"pl": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"uk": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)",
-				"zh-cn": "GitHub interim: AS220 S2000 AC input/charge limit from 100 W (#24)"
+				"en": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"de": "MQTT-Telemetrie-Push zwischen Polls (#26); AS220 S2000 AC-Ladelimit ab 100 W (#24)",
+				"ru": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"pt": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"nl": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"fr": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"it": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"es": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"pl": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"uk": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
+				"zh-cn": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)"
 			},
 			"0.10.112": {
 				"en": "AS220/PPS: remaining time, AC output power, writable SOC charge limits (#24)",
