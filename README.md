@@ -449,6 +449,10 @@ Enable **Objects → Tagesstatistiken** for kWh tiles; enable **Leistungsflüsse
 
 ## Changelog
 
+### 0.10.115
+
+- **Fix (#27):** Repo checker **E1144** — translate `common.news` locales for 0.10.114 (and ship localized 0.10.115 news)
+
 ### 0.10.114
 
 - **Fix (#24):** AS220 **SOLIX S2000** — MQTT `ac_charge_limit` / `ac_input_limit` minimum **100 W** (was 200 W); entity metadata max **2400 W** (device variant still clamps via `ac_input_limit_max`)

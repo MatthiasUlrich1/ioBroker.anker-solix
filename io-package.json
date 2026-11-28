@@ -1,21 +1,34 @@
 {
 	"common": {
 		"name": "anker-solix",
-		"version": "0.10.114",
+		"version": "0.10.115",
 		"messagebox": true,
 		"news": {
+			"0.10.115": {
+				"en": "Fix news translations for repo checker E1144 (#27)",
+				"de": "News-Übersetzungen für Repo-Checker E1144 korrigiert (#27)",
+				"ru": "Исправлены переводы common.news для проверки репозитория E1144 (#27)",
+				"pt": "Correção das traduções de common.news para o verificador E1144 (#27)",
+				"nl": "Vertalingen van common.news voor repo-checker E1144 gecorrigeerd (#27)",
+				"fr": "Correction des traductions common.news pour le contrôleur E1144 (#27)",
+				"it": "Corrette le traduzioni di common.news per il repo checker E1144 (#27)",
+				"es": "Traducciones de common.news corregidas para el comprobador E1144 (#27)",
+				"pl": "Poprawiono tłumaczenia common.news dla sprawdzarki repozytorium E1144 (#27)",
+				"uk": "Виправлено переклади common.news для перевірки репозиторію E1144 (#27)",
+				"zh-cn": "修复仓库检查 E1144 的 common.news 翻译（#27）"
+			},
 			"0.10.114": {
 				"en": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
 				"de": "MQTT-Telemetrie-Push zwischen Polls (#26); AS220 S2000 AC-Ladelimit ab 100 W (#24)",
-				"ru": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"pt": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"nl": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"fr": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"it": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"es": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"pl": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"uk": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)",
-				"zh-cn": "MQTT push telemetry between polls (#26); AS220 S2000 AC charge limit from 100 W (#24)"
+				"ru": "MQTT-телеметрия между опросами (#26); лимит заряда AC AS220 S2000 от 100 Вт (#24)",
+				"pt": "Telemetria MQTT entre polls (#26); limite de carga AC AS220 S2000 a partir de 100 W (#24)",
+				"nl": "MQTT-telemetrie tussen polls (#26); AS220 S2000 AC-laadlimiet vanaf 100 W (#24)",
+				"fr": "Télémétrie MQTT entre les polls (#26) ; limite de charge AC AS220 S2000 à partir de 100 W (#24)",
+				"it": "Telemetria MQTT tra i poll (#26); limite di carica AC AS220 S2000 da 100 W (#24)",
+				"es": "Telemetría MQTT entre polls (#26); límite de carga AC AS220 S2000 desde 100 W (#24)",
+				"pl": "Telemetria MQTT między odpytaniami (#26); limit ładowania AC AS220 S2000 od 100 W (#24)",
+				"uk": "MQTT-телеметрія між опитуваннями (#26); ліміт заряду AC AS220 S2000 від 100 Вт (#24)",
+				"zh-cn": "轮询之间推送 MQTT 遥测（#26）；AS220 S2000 交流充电下限 100 W（#24）"
 			},
 			"0.10.112": {
 				"en": "AS220/PPS: remaining time, AC output power, writable SOC charge limits (#24)",
